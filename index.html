@@ -97,6 +97,31 @@ body.home-on #musB{display:none}
  .h2grid{flex:1;grid-template-columns:repeat(6,1fr);gap:7px;align-content:center}
  .h2grid .pc{padding:6px 3px}.h2grid .pc img{max-width:min(76px,13vh)}.h2grid .pc b{font-size:12px}.h2grid .pc small{font-size:9px}
 }
+
+/* v22: all 12 characters on one screen, compact grid, button just "Hrej" */
+.home{overflow:hidden}
+.hm2{height:100%;min-height:0;gap:8px}
+.h2main{min-height:0;gap:8px}
+.h2t{font-size:16px;margin:0;min-height:20px}
+.h2grid{flex:1;min-height:0;grid-template-columns:repeat(4,1fr);gap:7px;align-content:center}
+.h2grid .pc{padding:5px 2px 4px;border-radius:14px}
+.h2grid .pc img{width:100%;max-width:min(96px,19vw,11.5vh);border-radius:12px;margin-bottom:3px}
+.h2grid .pc b{font-size:12.5px;line-height:1.15;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h2grid .pc small{position:absolute;left:4px;right:4px;top:38%;font-size:10px;line-height:1.2;color:#fff;font-weight:800;text-shadow:0 1px 3px #000;pointer-events:none}
+.h2grid .pc.sel{transform:scale(1.04);box-shadow:0 0 0 3px rgba(244,114,182,.45),0 0 18px rgba(236,72,153,.55)}
+.h2grid .pc.sel::after{width:18px;height:18px;font-size:11px;top:3px;right:4px}
+.h2play{position:static;justify-content:center;text-align:center;padding:12px 18px;flex:none}
+.h2play b{font-size:28px;font-weight:900;letter-spacing:1px}
+.h2bar .brand img{width:42px;height:42px}.h2bar .brand b{font-size:22px}
+@media (orientation:portrait) and (min-height:680px){.h2grid{grid-template-columns:repeat(3,1fr);gap:8px}.h2grid .pc img{max-width:min(110px,26vw,11.6vh)}.h2grid .pc b{font-size:14px}}
+@media (orientation:portrait) and (max-height:620px){.h2bar .brand small{display:none}.h2bar .brand img{width:34px;height:34px}.h2play{padding:9px 16px}.h2play b{font-size:24px}}
+@media (orientation:landscape){
+ .h2bar .brand img{width:34px;height:34px}.h2bar .brand b{font-size:19px}.h2bar .brand small{display:none}
+ .h2side{width:30%;gap:10px}
+ .h2grid{grid-template-columns:repeat(6,1fr);gap:6px}
+ .h2grid .pc img{max-width:min(84px,9vw,18vh)}.h2grid .pc b{font-size:11.5px}
+ .h2play{padding:14px 12px}
+}
 </style></head><body>
 <canvas id="c"></canvas>
 <div id="menu" class="scr home">
@@ -108,12 +133,12 @@ body.home-on #musB{display:none}
   <div class="h2main">
    <div class="h2side">
     <h2 class="h2t" id="h2T">Za koho hraješ?</h2>
-    <button class="cta h2play" id="playB"><span class="ci">▶</span><span class="ct"><b id="playT">Hrát</b><small id="playS">vyber si postavičku</small></span></button>
+    <button class="cta h2play" id="playB"><b id="playT">Hrej</b></button>
     <div class="live" id="hLive"><i></i><span id="onl">🔎 Zjišťuji, kdo hraje…</span></div>
    </div>
    <div class="h2grid" id="hgrid"></div>
   </div>
-  <div hidden id="hLegacy"><span id="coinT"></span><span id="lvlT"></span><button id="shopB"></button><div id="xpB"></div>
+  <div hidden id="hLegacy"><small id="playS"></small><span id="coinT"></span><span id="lvlT"></span><button id="shopB"></button><div id="xpB"></div>
    <div id="hMe"><img id="hMeImg" alt=""><small id="hHi"></small><b id="hMeN"></b><button id="hChange"></button></div>
    <button id="soloB"></button><button id="retroB"></button><button id="c2dB"></button><button id="privB"></button><div id="bdg"></div><button id="d3B"></button></div>
  </div>
@@ -127,7 +152,7 @@ body.home-on #musB{display:none}
  <p class="shp">🚲 <b>Děda Martin a Anička přijeli na kolech!</b> „Cink cink!“ – zaparkují u dveří a volají děcka ven („Jdeme na kolo! Hura ven, děcka!“). Děti se za nimi rozběhnou. Najdi po domě 3 helmy ⛑️ (+10, všechny +20) a pošli děcka ven (✋ u dítěte = „Pošli na kolo“ +10). Pozor, Arianka by chtěla jet taky a leze ke dveřím! Když hraješ za dítě, ✋ u Martina nebo Aničky = „Jet na kolo“ (+20). Pak odjedou a děcka se po chvíli vrátí.</p>
  <p class="shp">📱 <b>3D:</b> levá páčka = chůze • táhni prstem vpravo = otáčení • ✋ AKCE • 🔄 předmět (dudlík / lahev / plenka) • 🗺️ mapa domu</p>
  <p class="shp">⌨️ WASD + myš/šipky • E akce • Q předmět • M mapa • Mezerník skok • 🎮 ovladač: páčky + A/X/Y</p>
- <p class="shp">🌐 <b>Hrát s rodinou:</b> kdo zapne hru a ťukne na Hrát, je hned ve stejném domě s ostatními (max 8). Bez kódů, bez účtů.</p></div></div>
+ <p class="shp">🌐 <b>Hrát s rodinou:</b> kdo zapne hru a ťukne na Hrej, je hned ve stejném domě s ostatními (max 8). Bez kódů, bez účtů.</p></div></div>
 <div id="classic" class="scr hide">
  <div class="top"><button class="b" id="c2X">‹ Zpět</button><span class="pill">🕹️ Klasická 2D</span></div>
  <h1>Klasická <span>2D</span></h1>
@@ -1704,7 +1729,7 @@ function h2Build(){const g=$('hgrid');g.innerHTML='';H2.btn={};CH.forEach(c=>{co
  d.innerHTML='<img src="'+SRC('sq_'+c.id)+'" alt=""><b>'+c.n+'</b><small>&nbsp;</small>';d.onclick=()=>h2Pick(c);g.appendChild(d);H2.btn[c.id]=d})}
 function h2Upd(){if(!H2.btn.misa)h2Build();const me=meChar();CH.forEach(c=>{const d=H2.btn[c.id],tk=roomTaken(c.id);d.classList.toggle('sel',me===c&&!tk);d.classList.toggle('tk',tk);d.querySelector('small').innerHTML=tk?'🎮 už hraje':'&nbsp;'});
  const ok=me&&!roomTaken(me.id),b=$('playB');b.classList.toggle('off',!ok);if(H2.go)return;
- $('playT').textContent='Hrát';$('playS').textContent=ok?'jako '+me.n:(me?'🎮 '+me.n+' už hraje – vyber jinou':'nejdřív si vyber postavičku ☝️');$('h2T').textContent=H2.msg||(ok?'Hraješ za: '+me.n:'Za koho hraješ?')}
+ $('playT').textContent='Hrej';$('h2T').textContent=H2.msg||(ok?'Hraješ za: '+me.n:me?'🎮 '+me.n+' už hraje – vyber jinou':'Za koho hraješ? Ťukni na sebe ☝️')}
 function h2Pick(c){if(roomTaken(c.id)){H2.msg='🎮 '+c.n+' už hraje – vyber jinou postavu';h2Upd();h2Shake();return}H2.msg=null;LS.set('nchar',c.id);NET.myChar=c;D3.c=c;snd(880,.06,'triangle');h2Upd()}
 function h2Shake(){const e=$('h2T');e.classList.remove('h2msg');void e.offsetWidth;e.classList.add('h2msg')}
 const _renderHomeH2=renderHome;renderHome=function(){_renderHomeH2();H2.go=0;$('playB').classList.remove('busy');h2Upd()};
@@ -1716,7 +1741,7 @@ function h2Play(){if(H2.go)return;const c=meChar();if(!c){H2.msg=null;$('h2T').t
  D3.retro=0;NET.myChar=c;D3.c=c;LS.set('nchar',c.id);
  if(typeof Peer==='undefined'||!navigator.onLine){h2Solo(c,'📴 Bez internetu – hraješ sám. Až bude síť, přidáš se k rodině sám.');return}
  if(AUTO.roster&&AUTO.roster.length>=8){h2Solo(c,'🚫 Rodinná hra je plná (8 hráčů) – hraješ zatím sám.');return}
- H2.go=1;const b=$('playB');b.classList.add('busy');$('playT').textContent='Připojuji…';$('playS').textContent='hledám rodinu online';
+ H2.go=1;const b=$('playB');b.classList.add('busy');$('h2T').textContent='⏳ Připojuji se k rodině…';
  d3off();D3.on=1;setRoom(ROOM3,1);autoPick(c);const t0=performance.now();
  const iv=setInterval(()=>{if(run){clearInterval(iv);H2.go=0;b.classList.remove('busy');return}
   if(performance.now()-t0>9000||(!AUTO.busy&&!NET.role)){clearInterval(iv);h2Solo(c,'📴 Online se zatím nepodařilo připojit – hraješ sám, zkouším to dál na pozadí.')}},250)}
