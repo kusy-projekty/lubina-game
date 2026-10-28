@@ -1191,6 +1191,35 @@ const _npcLookP=npcLook;npcLook=function(n){if(!SP_POSE.includes(n.pose)||n.need
  else{o={walk:f*1.57+.01,wave:n.pose==='call'?(f&1?1:-1):0};key+=f+d}
  return{c:bodySpr(key,n.c,o,L,imOK(SQ[id])),z:0}};
 window.bikeStart=bikeStart;
+// ================= v18: sousedka za plotem + vlčák Fík (jen nová 3D grafika, host-authoritative) =================
+const NYD={x0:1060,x1:1300,y0:90,y1:1120},DHS={x:1210,y:200,dx:1166,dy:200},
+ SOUL=['Fíku, do boudy! 🐕','Fíku! Do boudy, hned! 😤','Fíku, nech toho! 🙄','Fíkůůů! Pojď sem! 📢','Fíku, ty jeden lumpe! 😅'];
+function fikInit(){S.fik={x:1150,y:600,st:'run',t:4,tx:null,ty:null,bub:'',bubT:0,cd:0};S.sou={x:1240,y:420,tx:null,ty:null,bub:'',bubT:0,ct:2,ok:0}}
+function nyClamp(o){o.x=Math.max(NYD.x0,Math.min(NYD.x1,o.x));o.y=Math.max(NYD.y0,Math.min(NYD.y1,o.y))}
+function nyMove(o,tx,ty,sp,dt){const d=dist(o.x,o.y,tx,ty);if(d>1){const s=Math.min(d,sp*dt);o.x+=(tx-o.x)/d*s;o.y+=(ty-o.y)/d*s}nyClamp(o);return dist(o.x,o.y,tx,ty)}
+function nyRnd(){return{x:NYD.x0+Math.random()*(NYD.x1-NYD.x0),y:NYD.y0+60+Math.random()*(NYD.y1-NYD.y0-60)}}
+function fikSay(t){const f=S.fik;f.bub=t;f.bubT=1.8}
+function souSay(t,ch){const s=S.sou;s.bub=t;s.bubT=2.6;if(ch)chat('Sousedka',t,'#a855f7')}
+function fikHome(by){const f=S.fik;if(f.st==='go'||f.st==='house')return false;f.st='go';f.t=0;fikSay('Haf… 🐾');return true}
+function fikUpd(dt){if(!S.d3)return;if(!S.fik)fikInit();const f=S.fik,s=S.sou;if(f.bubT>0)f.bubT-=dt;if(s.bubT>0)s.bubT-=dt;if(f.cd>0)f.cd-=dt;
+ // something near the fence on our side? (cats / Bára / dog / players at the east windows)
+ let lure=null;(S.pets||[]).forEach(q=>{if(q.x>640&&q.st!=='fly')lure=q});if(S.dog&&S.dog.x>700)lure=S.dog;
+ if(f.st==='house'){f.t-=dt;f.x=DHS.dx+12;f.y=DHS.dy;if(f.t<=0||(lure&&f.t<3)){f.st='run';f.t=5+Math.random()*4;f.tx=null;fikSay('HAF HAF! 🐕💨');s.ok=0;souSay(R1(['Fíku! Ne! Zpátky! 😫','A je venku… Fíku, do boudy! 🙄']),Math.random()<.4)}}
+ else if(f.st==='go'){if(nyMove(f,DHS.dx,DHS.dy,170,dt)<10){f.st='house';f.t=6+Math.random()*6;fikSay('Haf. 😔');if(!s.ok){s.ok=1;souSay(R1(['Hodný pejsek! 🦴','No konečně! Hodný Fík 🦴','Tak, a zůstaň tam! ☝️']),Math.random()<.4)}}}
+ else if(lure&&f.st!=='fence'&&Math.random()<dt*1.5){f.st='fence';f.t=3+Math.random()*2}
+ else if(f.st==='fence'){f.t-=dt;const ty=lure?Math.max(NYD.y0+40,Math.min(NYD.y1,lure.y)):f.y;nyMove(f,NYD.x0,ty+Math.sin(S.t*3)*40,230,dt);if(Math.random()<dt*1.6)fikSay(R1(['Haf haf! 🐕','HAF! HAF! 😠','Grrr… haf! 🐾']));if(f.t<=0){f.st='run';f.t=4;f.tx=null}}
+ else{f.t-=dt;if(f.tx==null||dist(f.x,f.y,f.tx,f.ty)<20){const r=nyRnd();f.tx=r.x;f.ty=r.y}nyMove(f,f.tx,f.ty,215,dt);if(Math.random()<dt*.5)fikSay(R1(['Haf haf! 🐕','Haf! 🐾','Hafff! 🎾']))}
+ // neighbour chases him
+ if(f.st==='house'){nyMove(s,DHS.dx-50,DHS.dy+90,70,dt);if(Math.random()<dt*.08)souSay(R1(['Konečně klid… ☕','Ten pes mě jednou zničí 😅']))}
+ else{const d=nyMove(s,f.x+30,f.y+25,f.st==='fence'?140:150,dt);s.ct-=dt;if(s.ct<=0){s.ct=2.4+Math.random()*1.8;souSay(R1(SOUL),Math.random()<.18)}
+  if(d<45&&f.st==='run'&&Math.random()<dt*.35)fikHome('sou')}}
+const _needsUpdF=needsUpd;needsUpd=function(dt){_needsUpdF(dt);fikUpd(dt)};
+// action: at a living-room east window (or anywhere at the east wall) call Fík to the doghouse
+const _ctxF=ctx;ctx=function(p){const r=_ctxF(p);if(!S.d3||!S.fik||p.need||S.change)return r;if(r&&!r.hint&&!LOWP.includes(r.l))return r;
+ const f=S.fik;if(p.x>690&&p.y>260&&p.y<560&&f.st!=='house'&&f.st!=='go'&&f.cd<=0)return{l:'Zavolej Fíka',e:'🐕',f:()=>{if(!fikHome('p'))return;f.cd=12;addPts(p,5);p.coins+=1;chat(p.c.n,'Fíku! Do boudy! 🐕',p.c.col);souSay('Děkuju, sousede! 😊 Hodný Fík!',1)}};
+ return r};
+const _x2SnapF=x2Snap;x2Snap=function(){const o=_x2SnapF();if(S.fik){const f=S.fik,s=S.sou;o.f=[f.x|0,f.y|0,f.st,f.bubT>0?f.bub:'',s.x|0,s.y|0,s.bubT>0?s.bub:'']}return o};
+const _x2ApplyF=x2Apply;x2Apply=function(m){_x2ApplyF(m);if(m&&m.f){if(!S.fik)fikInit();const a=m.f,f=S.fik,s=S.sou;f.x=a[0];f.y=a[1];f.st=a[2];f.bub=a[3];f.bubT=a[3]?1:0;s.x=a[4];s.y=a[5];s.bub=a[6];s.bubT=a[6]?1:0}};
 // ================= v17: „Lubina 3D“ – skutečné 3D (three.js) nad stejnou simulací; retro raycaster = D3.retro =================
 D3.retro=0;
 const GL={r:null,fail:0,av:{},fp:0,pitch:.5,dist:225,cd:225,pr:1,fi:16,slow:0,on:0,w:0,h:0,yaw:0,myH:-Math.PI/2,chat:1,frames:0};
@@ -1238,11 +1267,11 @@ function glWorld(){const sc=GL.sc;SB={};
  [wood,tile,tileB,carp,ext,cladT,road,pav].forEach(t=>{t.wrapS=t.wrapT=THREE.RepeatWrapping});
  const MT={flW:new THREE.MeshLambertMaterial({map:wood}),flK:new THREE.MeshLambertMaterial({map:tile}),flB:new THREE.MeshLambertMaterial({map:tileB}),flC:new THREE.MeshLambertMaterial({map:carp}),
   ext:new THREE.MeshLambertMaterial({map:ext}),clad:new THREE.MeshLambertMaterial({map:cladT}),road:new THREE.MeshLambertMaterial({map:road}),pav:new THREE.MeshLambertMaterial({map:pav}),wood:new THREE.MeshLambertMaterial({map:wood,color:'#ffffff'}),
-  glass:new THREE.MeshLambertMaterial({color:'#bfe6ff',transparent:true,opacity:.28,depthWrite:false}),wall:gm('#f5f2ec'),wallE:gm('#f5f2ec'),lin:gm('#f5f2ec'),wallK:gm('#fef3c7'),wallP:gm('#fce7f3'),frame:gm('#374151'),roof:gm('#e5e7eb'),trim:gm('#334155'),roofH:gm('#e5e7eb'),trimH:gm('#334155'),ceil:gm('#ffffff'),
+  glass:new THREE.MeshPhongMaterial({color:'#d6f0ff',specular:'#ffffff',shininess:90,transparent:true,opacity:.2,depthWrite:false}),wall:gm('#f5f2ec'),wallE:gm('#f5f2ec'),lin:gm('#f5f2ec'),wallK:gm('#fef3c7'),wallP:gm('#fce7f3'),frame:gm('#374151'),roof:gm('#e5e7eb'),trim:gm('#334155'),roofH:gm('#e5e7eb'),trimH:gm('#334155'),ceil:gm('#ffffff'),
   sofa:gm('#5b6b84'),cush:gm('#8ea0bb'),pY:gm('#facc15'),pP:gm('#f472b6'),arm:gm('#0f9488'),cush2:gm('#5eead4'),woodD:gm('#8b5a2b'),dark:gm('#1f2937'),steel:gm('#cbd5e1'),cab:gm('#ffffff'),ctop:gm('#475569'),
   white:gm('#ffffff'),water:gm('#38bdf8'),mirror:gm('#c7e9fb'),bedM:gm('#f9a8d4'),toyR:gm('#ef4444'),toyB:gm('#3b82f6'),toyY:gm('#facc15'),toyG:gm('#22c55e'),pot:gm('#f8fafc'),leaf:gm('#34a853',{flatShading:true}),
   leaf2:gm('#2e9b46',{flatShading:true}),trunk:gm('#8b5a2b'),bush:gm('#3fae49',{flatShading:true}),fence:gm('#ffffff'),side:gm('#d4d4d8'),line:gm('#fde047'),lineW:gm('#ffffff'),cloud:gm('#ffffff',{flatShading:true,emissive:'#9ca3af'}),
-  carR:gm('#ef4444'),carB:gm('#2563eb'),tire:gm('#111827'),win:gm('#93c5fd'),hN1:gm('#fde68a'),hN2:gm('#bfdbfe'),hN3:gm('#fecaca'),hN4:gm('#bbf7d0'),rugL:gm('#9aa8bd'),rugH:gm('#9cc0f7'),rugK:gm('#fde047'),door:gm('#a16207'),gold:gm('#facc15'),lamp:gm('#fffbeb',{emissive:'#fde68a'})};
+  carR:gm('#ef4444'),carB:gm('#2563eb'),tire:gm('#111827'),win:gm('#93c5fd'),hN1:gm('#fde68a'),hN2:gm('#bfdbfe'),hN3:gm('#fecaca'),hN4:gm('#bbf7d0'),rugL:gm('#9aa8bd'),dhW:gm('#b45309'),bowl:gm('#2563eb'),bone:gm('#fafaf9'),flw1:gm('#f472b6',{flatShading:true}),flw2:gm('#facc15',{flatShading:true}),rugH:gm('#9cc0f7'),rugK:gm('#fde047'),door:gm('#a16207'),gold:gm('#facc15'),lamp:gm('#fffbeb',{emissive:'#fde68a'})};
  GL.MT=MT;Object.assign(TSC,{flW:90,flK:40,flB:40,flC:60,ext:120,clad:60,road:120,pav:60,wood:90});
  // ---- floors (top at 0) ----
  bx('flW',0,200,760,470,-2,2);bx('flW',230,670,370,630,-2,2);bx('flW',600,670,160,280,-2,2);bx('flK',0,670,230,400,-2,2);bx('flB',0,1070,230,230,-2,2);bx('flC',600,950,160,350,-2,2);
@@ -1297,8 +1326,17 @@ function glWorld(){const sc=GL.sc;SB={};
  // neighbour houses across + both sides
  const nh=(X,Y,w,d,k,h)=>{bx(k,X,Y,w,d,0,h);bx('roof',X-20,Y-20,w+40,d+40,h,12);bx('trim',X-22,Y-22,w+44,d+44,h+12,4);for(let i=0;i<Math.floor(w/120);i++){bx('win',X+40+i*120,Y-2,60,3,50,60);bx('win',X+40+i*120,Y+d-1,60,3,50,60)}bx('door',X+w/2-25,Y-2,50,3,0,90)};
  nh(-780,2000,420,320,'hN1',170);nh(80,2010,480,300,'hN2',190);nh(900,2000,440,330,'hN3',170);nh(-1050,250,400,900,'hN4',180);nh(1330,300,420,860,'hN1',170);nh(-1700,2050,420,300,'hN4',170);nh(1600,2000,420,320,'hN2',180);
+ // neighbour's yard (Sousedka + Fík) behind the east fence
+ for(let X=1026;X<1760;X+=80)bx('fence',X,40,6,6,0,46);bx('fence',1026,41,734,3,14,6);bx('fence',1026,41,734,3,32,6);
+ for(let X=1026;X<1330;X+=80)bx('fence',X,1180,6,6,0,46);bx('fence',1026,1181,304,3,14,6);bx('fence',1026,1181,304,3,32,6);
+ bx('dhW',DHS.x-40,DHS.y-38,84,76,0,58);bx('dark',DHS.x-42,DHS.y-14,3,28,0,38);bx('dhW',DHS.x-44,DHS.y-40,4,80,0,4);
+ {const g=new THREE.CylinderGeometry(12,12,6,10);g.translate(DHS.x-70,3,DHS.y+60);(SB.bowl=SB.bowl||[]).push(g)}
+ bx('bone',DHS.x-110,DHS.y+120,22,6,0,5);[[1120,1050],[1180,1060],[1250,1040]].forEach((q,i)=>blob(i%2?'flw1':'flw2',q[0],q[1],10,14,.7,1));
  // merge everything static into a few meshes
  GL.cut=[];Object.keys(SB).forEach(k=>{const m=new THREE.Mesh(gMerge(SB[k]),MT[k]||gm('#ff00ff'));if(k==='glass')m.renderOrder=2;if(k==='ceil'||k==='roofH'||k==='trimH'||k==='lin')GL.cut.push(m);if(k==='wall')GL.wallM=m;sc.add(m)});SB={};
+ {const fr=new THREE.Mesh(new THREE.CylinderGeometry(50,50,94,3),gm('#b91c1c'));fr.rotation.x=-Math.PI/2;fr.position.set(DHS.x+2,58+25,DHS.y);sc.add(fr);
+  const sg=new THREE.Mesh(new THREE.PlaneGeometry(40,14),new THREE.MeshBasicMaterial({map:gtex(128,44,(g,w,h)=>{g.fillStyle='#fef3c7';g.fillRect(0,0,w,h);g.strokeStyle='#78350f';g.lineWidth=6;g.strokeRect(3,3,w-6,h-6);g.fillStyle='#78350f';g.font='bold 30px system-ui';g.textAlign='center';g.textBaseline='middle';g.fillText('FÍK',w/2,h/2+2)})}));
+  sg.rotation.y=-Math.PI/2;sg.position.set(DHS.x-43.5,48,DHS.y);sc.add(sg)}
  // dynamic decor: TV screen, photo wall, dishwasher label, front door leaves
  GL.tvOn=gtex(256,144,(g,w,h)=>{const q=g.createLinearGradient(0,0,0,h);q.addColorStop(0,'#38bdf8');q.addColorStop(1,'#a7f3d0');g.fillStyle=q;g.fillRect(0,0,w,h);g.fillStyle='#22c55e';g.fillRect(0,h*.72,w,h*.28);g.fillStyle='#fde047';g.beginPath();g.arc(w*.8,h*.25,18,0,7);g.fill();emoT(g,'🐻',w*.35,h*.6,60);emoT(g,'🐰',w*.6,h*.66,44)});
  GL.tvOff=gtex(16,16,(g,w,h)=>{g.fillStyle='#0b0f17';g.fillRect(0,0,w,h)});
@@ -1317,7 +1355,7 @@ function glPhotos(){if(GL.phOK)return;const ids=['babicka','deda','paja','misa',
 // ---------- blocky avatars ----------
 const AVG={};function avG(){if(AVG.leg)return AVG;const b=(w,h,d,y)=>{const g=new THREE.BoxGeometry(w,h,d);g.translate(0,y,0);return g};
  AVG.leg=b(15,38,15,-19);AVG.arm=b(12,36,13,-16);AVG.torso=b(34,38,18,19);AVG.head=b(30,30,30,15);AVG.hat=b(36,8,36,4);return AVG}
-const FACE={};function faceMat(id){const k=(id==='kuba'&&kubaSpi())?'kuba_spi':id;if(FACE[k])return FACE[k];const im=SQ[k];if(!imOK(im))return null;
+const FACE={};function faceMat(id){if(id==='sousedka'){if(!FACE.sousedka)FACE.sousedka=new THREE.MeshLambertMaterial({map:gtex(128,128,(g,w,h)=>{g.fillStyle=SKIN;g.fillRect(0,0,w,h);g.fillStyle='#6b3f1d';g.fillRect(0,0,w,26);g.fillStyle='#111827';g.beginPath();g.arc(42,56,8,0,7);g.arc(86,56,8,0,7);g.fill();g.fillStyle='#fff';g.beginPath();g.arc(45,53,3,0,7);g.arc(89,53,3,0,7);g.fill();g.fillStyle='#f9a8d4';g.beginPath();g.arc(30,78,9,0,7);g.arc(98,78,9,0,7);g.fill();g.strokeStyle='#7f1d1d';g.lineWidth=6;g.lineCap='round';g.beginPath();g.arc(64,80,18,.25,Math.PI-.25);g.stroke()})});return FACE.sousedka}const k=(id==='kuba'&&kubaSpi())?'kuba_spi':id;if(FACE[k])return FACE[k];const im=SQ[k];if(!imOK(im))return null;
  FACE[k]=new THREE.MeshLambertMaterial({map:gtex(128,128,(g,w,h)=>{g.fillStyle=SKIN;g.fillRect(0,0,w,h);g.drawImage(im,2,2,w-4,h-4)})});return FACE[k]}
 function mkAv(c,sc){const G=avG(),root=new THREE.Group(),body=new THREE.Group(),skin=gm(SKIN),sh=gm(c.col||'#60a5fa'),pa=gm(c.leg||'#1e293b');root.add(body);
  const hips=new THREE.Group();hips.position.y=38;body.add(hips);const lL=new THREE.Mesh(G.leg,pa),lR=new THREE.Mesh(G.leg,pa);lL.position.x=-8.5;lR.position.x=8.5;const gL=new THREE.Group(),gR=new THREE.Group();gL.position.x=-8.5;gR.position.x=8.5;lL.position.x=0;lR.position.x=0;gL.add(lL);gR.add(lR);hips.add(gL);hips.add(gR);
@@ -1337,6 +1375,12 @@ function mkPet(k,col){const G=new THREE.Group(),m=gm(col),dk=gm('#111827'),b=(w,
  if(dog){b(6,12,6,-8.5*s,25*s,17*s);b(6,12,6,8.5*s,25*s,17*s);b(9,7,7,0,20*s,28*s);b(4,3,2,0,22*s,32*s,dk)}else{b(4,7,3,-5,34,19);b(4,7,3,5,34,19);b(2,2,1,0,22,26.3,gm('#f9a8d4'))}
  [[-5,-10],[5,-10],[-5,10],[5,10]].forEach(q=>b(4*s,10*s,4*s,q[0]*s,5*s,q[1]*s));const t=b(3.5*s,3.5*s,20*s,0,24*s,-20*s);t.rotation.x=dog?-.4:-.9;
  const shd=new THREE.Mesh(GL.shG,GL.shM);shd.scale.set(16*s,1,22*s);G.add(shd);GL.sc.add(G);return{root:G,shd,h:0,lx:null,ly:null}}
+function mkFik(){const G=new THREE.Group(),m=gm('#b7793f'),dk=gm('#2b1d14'),lt=gm('#e3b77a'),b=(w,h,d,X,Y,Z,mt,par)=>{const q=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mt||m);q.position.set(X,Y,Z);(par||G).add(q);return q};
+ b(24,22,50,0,30,0);b(25,8,34,0,43,-3,dk);b(20,10,40,0,20,0,lt);const hd=new THREE.Group();hd.position.set(0,44,28);G.add(hd);b(22,20,20,0,0,0,m,hd);b(12,10,14,0,-4,15,lt,hd);b(6,5,3,0,-1,22,dk,hd);
+ b(7,10,4,-7,13,-3,m,hd).rotation.z=.2;b(7,10,4,7,13,-3,m,hd).rotation.z=-.2;b(4,4,4.2,-7,17,-3,dk,hd);b(4,4,4.2,7,17,-3,dk,hd);b(4,4,1,-5.5,4,10.2,dk,hd);b(4,4,1,5.5,4,10.2,dk,hd);
+ const legs=[[-8,-17],[8,-17],[-8,17],[8,17]].map(q=>{const g=new THREE.Group();g.position.set(q[0],22,q[1]);G.add(g);b(7,22,7,0,-11,0,q[1]<0?m:lt,g);b(7,3,8,0,-21,1,dk,g);return g});
+ const tl=new THREE.Group();tl.position.set(0,38,-25);G.add(tl);b(6,6,26,0,0,-12,m,tl);b(6,6,8,0,0,-26,dk,tl);tl.rotation.x=.5;
+ const shd=new THREE.Mesh(GL.shG,GL.shM);shd.scale.set(22,1,32);G.add(shd);GL.sc.add(G);return{root:G,shd,h:Math.PI,lx:null,ly:null,legs,tl,hd,ph:0}}
 const PETC=['#f59e0b','#1f2937','#9ca3af','#f5f5f4'];
 // ---------- pose per NPC / player ----------
 const BABYC={id:'mimino',n:'Arianka',col:'#ff8fc1',leg:'#ffffff'};const angD=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
@@ -1399,6 +1443,18 @@ function glScene(me,dt){const OV=[],b=S.b,t=S.t;GL.frames++;SPL.i=0;RNG.i=0;BKP.
  const pl=Math.floor(t*4)&1;S.items.forEach(it=>{sp(it.em,it.x,it.y,16,30);ring(it.x,it.y,22,'#ef4444',pl?.6:.35)});S.mess.forEach(m=>sp(m.em,m.x,m.y,10,24));
  S.gl.forEach(g=>{sp(g.e||'🥛',g.x,g.y,12,20);ring(g.x,g.y,14,'#ffffff',.55)});if(S.lost&&S.lost.by<0){sp(S.lost.em,S.lost.x,S.lost.y,14+Math.abs(Math.sin(t*4))*8,24);ring(S.lost.x,S.lost.y,22,'#facc15',.45+.25*Math.sin(t*7))}
  (S.helm||[]).forEach(h=>{sp('⛑️',h.x,h.y,14+Math.abs(Math.sin(t*4))*8,26);ring(h.x,h.y,22,'#facc15',.45)});if(S.bike)(S.bike.bk||[]).forEach(k=>bikeAt(k.x,k.y,-Math.PI/2,'#ef4444'));
+ // neighbour's yard: Fík + Sousedka (host simulates, here only smoothing)
+ if(S.fik){const f=S.fik,so=S.sou;let a=GL.av.fik;if(!a)a=GL.av.fik=mkFik();a.root.visible=true;a.seen=GL.frames;
+  if(a.sx==null){a.sx=f.x;a.sy=f.y}const k=Math.min(1,dt*9);a.sx+=(f.x-a.sx)*k;a.sy+=(f.y-a.sy)*k;
+  const dx=a.lx==null?0:a.sx-a.lx,dy=a.ly==null?0:a.sy-a.ly,v=dt>0?Math.hypot(dx,dy)/dt:0;a.lx=a.sx;a.ly=a.sy;if(v>8)a.h+=angD(a.h,Math.atan2(dy,dx))*Math.min(1,dt*10);else if(f.st==='house')a.h+=angD(a.h,Math.PI)*Math.min(1,dt*6);
+  a.ph+=Math.min(v,300)*dt*.09;const sw=Math.sin(a.ph)*Math.min(1,v/120)*.8;a.legs.forEach((g,i)=>g.rotation.x=(i===0||i===3)?sw:-sw);a.tl.rotation.y=Math.sin(t*(v>20?16:7))*.5;a.hd.rotation.x=f.bubT>0?Math.sin(t*20)*.08:0;
+  a.root.position.set(a.sx,Math.abs(Math.sin(a.ph))*3*Math.min(1,v/120),a.sy);a.root.rotation.y=Math.PI/2-a.h;
+  const inDh=f.st==='house';if(!inDh){add('npc',{x:a.sx,y:a.sy,z:76,n:{c:{n:'🐕 Fík'},bub:f.bub,bubT:f.bubT},P:{}})}else if(f.bubT>0)add('bub',{x:DHS.x,y:DHS.y,z:120,t:f.bub});
+  if(inDh){a.root.position.set(DHS.x-36,0,DHS.y);a.h=Math.PI;a.root.rotation.y=Math.PI/2-a.h;a.legs.forEach(g=>g.rotation.x=0)}
+  const c={id:'sousedka',n:'Sousedka',col:'#a855f7',leg:'#1e3a8a'};const u=avGet('Xsou',c,AS);u.seen=GL.frames;
+  if(!u.hair){u.hair=1;const hm=gm('#6b3f1d');[[32,8,32,0,31,0],[32,26,6,0,18,-14],[6,20,30,-15,20,-1],[6,20,30,15,20,-1],[10,10,10,0,36,-16]].forEach(q=>{const o=new THREE.Mesh(new THREE.BoxGeometry(q[0],q[1],q[2]),hm);o.position.set(q[3],q[4],q[5]);u.hd.add(o)})}
+  if(u.sx==null){u.sx=so.x;u.sy=so.y}u.sx+=(so.x-u.sx)*k;u.sy+=(so.y-u.sy)*k;const P={sit:0,arm:so.bubT>0&&f.st!=='house'?1:0,fwd:0,wave:0,lie:0,bend:0,tilt:0,run:f.st!=='house'?1:0,dance:0,bike:0,pr:[],face:Math.atan2(a.sy-u.sy,a.sx-u.sx)};
+  const top=avPose(u,P,u.sx,u.sy,0,dt,null);add('npc',{x:u.sx,y:u.sy,z:top+10,n:{c:{n:'Sousedka'},bub:so.bub,bubT:so.bubT},P})}
  // hide what was not touched this frame
  Object.values(GL.av).forEach(a=>{if(a.seen!==GL.frames)a.root.visible=false});for(let i=SPL.i;i<SPL.a.length;i++)SPL.a[i].visible=false;for(let i=RNG.i;i<RNG.a.length;i++)RNG.a[i].visible=false;for(let i=BKP.i;i<BKP.a.length;i++)BKP.a[i].visible=false;
  return OV}
