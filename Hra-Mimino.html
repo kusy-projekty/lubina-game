@@ -1733,16 +1733,63 @@ function h2Solo(c,why){try{closeProbe()}catch(e){}const p=NET.peer;NET.peer=null
 function h2Play(){if(H2.go)return;const c=meChar();if(!c){H2.msg=null;$('h2T').textContent='☝️ Nejdřív ťukni na svou postavičku';h2Shake();return}
  if(roomTaken(c.id)){H2.msg='🎮 '+c.n+' už hraje – vyber jinou postavu';h2Upd();h2Shake();return}
  D3.retro=0;NET.myChar=c;D3.c=c;LS.set('nchar',c.id);
- if(typeof Peer==='undefined'||!navigator.onLine){h2Solo(c,'📴 Bez internetu – hraješ sám. Až bude síť, zapni hru znovu a přidáš se k rodině.');return}
+ if(typeof Peer==='undefined'||!navigator.onLine){h2Solo(c,'📴 Bez internetu – hraješ sám. Až bude síť, přidáš se k rodině sám.');return}
  if(AUTO.roster&&AUTO.roster.length>=8){h2Solo(c,'🚫 Rodinná hra je plná (8 hráčů) – hraješ zatím sám.');return}
  H2.go=1;const b=$('playB');b.classList.add('busy');$('playT').textContent='Připojuji…';$('playS').textContent='hledám rodinu online';
  d3off();D3.on=1;setRoom(ROOM3,1);autoPick(c);const t0=performance.now();
  const iv=setInterval(()=>{if(run){clearInterval(iv);H2.go=0;b.classList.remove('busy');return}
-  if(performance.now()-t0>9000||(!AUTO.busy&&!NET.role)){clearInterval(iv);h2Solo(c,'📴 Online se nepodařilo připojit – hraješ sám ve stejném domě.')}},250)}
+  if(performance.now()-t0>9000||(!AUTO.busy&&!NET.role)){clearInterval(iv);h2Solo(c,'📴 Online se zatím nepodařilo připojit – hraješ sám, zkouším to dál na pozadí.')}},250)}
 $('playB').onclick=h2Play;
 $('hLogo').src=SRC('sq_mimino');h2Build();h2Upd();
 // the old online screen (#net) is never shown any more – errors return to the start screen (or fall back to solo while connecting)
 const _autoErrH2=autoErr;autoErr=function(t){_autoErrH2(t);$('net').classList.add('hide');if(H2.go)return;$('menu').classList.remove('hide');drawMenu();H2.msg='📴 '+t;h2Upd()};
+// ================= v21: hra spuštěná „sám“ (pomalé připojení / bez internetu / offline soubor) se na pozadí dál zkouší spojit s rodinou =================
+// Každý pokus: nejdřív zkusí obsadit pevné ID rodinné místnosti (kdo ho dostane, je hostitel – rozhoduje signalizační server, takže dva „samotáři“ se vždy spojí);
+// když je ID obsazené, připojí se k hostiteli jako klient. Hráč zůstává ve hře se svou postavou, mění se jen patička „Online: N hráčů“.
+const BG={on:0,busy:0,t:null,n:0,peer:null,att:0,to:null,lib:0,tries:0};
+function bgLive(){return !!(BG.on&&run&&S&&!S.client&&!NET.role&&$('over').classList.contains('hide'))}
+function bgSched(ms){clearTimeout(BG.t);if(!BG.on)return;if(ms==null){ms=[5000,8000,12000,15000][Math.min(BG.n,3)]+Math.random()*1500;BG.n++}BG.t=setTimeout(bgTry,ms)}
+function bgKill(){clearTimeout(BG.to);BG.busy=0;BG.att++;const p=BG.peer;BG.peer=null;if(p&&p!==NET.peer)try{p.destroy()}catch(e){}}
+function bgStart(){BG.on=1;BG.n=0;bgKill();bgSched()}
+function bgStop(){BG.on=0;clearTimeout(BG.t);bgKill()}
+function bgLib(){if(BG.lib||!navigator.onLine||!location.protocol.startsWith('http'))return;BG.lib=1;const s=document.createElement('script');s.src='peerjs.min.js';s.onerror=()=>{BG.lib=0;s.remove()};document.head.appendChild(s)}
+function bgMe(){return S&&S.P&&S.P[LOC[0]||0]}
+function bgTry(){if(!BG.on||BG.busy)return;
+ if(NET.role){bgStop();return}
+ if(!bgLive()){bgSched(4000);return}                       // konec kola / pauza – zkusíme za chvíli
+ if(typeof Peer==='undefined'){bgLib();bgSched();return}
+ if(!navigator.onLine){bgSched();return}
+ BG.busy=1;BG.tries++;const a=++BG.att;let peer;try{peer=newPeer(ROOM)}catch(e){BG.busy=0;bgSched();return}BG.peer=peer;
+ const fail=()=>{if(BG.att!==a)return;bgKill();bgSched()};
+ BG.to=setTimeout(fail,15000);
+ peer.on('open',()=>{if(BG.att!==a)return;if(!bgLive()){fail();return}bgHost(peer)});
+ peer.on('error',e=>{if(BG.att!==a)return;if(e&&e.type==='unavailable-id'){BG.peer=null;try{peer.destroy()}catch(x){}bgJoin(a);return}fail()})}
+// nikdo nehostí -> stávám se hostitelem, rozehraná hra (skóre, mimino, NPC) zůstává
+function bgHost(peer){clearTimeout(BG.to);BG.peer=null;BG.busy=0;BG.on=0;clearTimeout(BG.t);
+ const me=LOC[0]||0,p=bgMe();NET.peer=peer;NET.role='host';NET.auto=1;NET.target=null;NET.code='🏠';NET.me=me;NET.warn='';NET.acc=1;AUTO.mig=0;AUTO.busy=false;
+ S.hostI=me;S.P.forEach(q=>{q.rin=q.rin||{dx:0,dy:0}});p.token=NET.token;NET.lobby=[{c:p.c,eq:p.eq,token:NET.token,conn:null,host:1}];LOC=[me];
+ bindPeerCommon(peer);
+ peer.on('connection',conn=>{conn.on('data',m=>hostMsg(conn,m));conn.on('close',()=>hostDrop(conn));conn.on('error',()=>hostDrop(conn))});
+ peer.on('error',e=>{if(NET.peer!==peer)return;if(run&&S)return;NET.role=null;NET.auto=0})}
+// hostitel už existuje -> připojím se jako klient (stejná postava), stav hry převezmu od hostitele
+function bgJoin(a){const me=bgMe();if(!me){bgKill();bgSched();return}
+ clearTimeout(BG.to);const fail=()=>{if(BG.att!==a)return;bgKill();bgSched()};BG.to=setTimeout(fail,25000);
+ let ad=0,peer;try{peer=newPeer()}catch(e){fail();return}BG.peer=peer;
+ peer.on('open',()=>{if(BG.att!==a)return;const c=peer.connect(ROOM,{reliable:true,serialization:'json'});
+  c.on('open',()=>{if(BG.att!==a)return;c.send({t:'hello',c:me.c.id,eq:SAVE.eq,token:NET.token})});
+  c.on('data',m=>{if(ad){clientMsg(m);return}if(BG.att!==a||!m||typeof m!=='object')return;
+   if(m.t==='start'){if(!bgLive()){try{c.close()}catch(e){}fail();return}ad=1;bgAdopt(peer,c,m)}
+   else if(m.t==='err'){bgKill();BG.n=4;bgSched(30000)}});      // postava je obsazená / plno -> hraju dál sám, zkusím později
+  const lost=()=>{if(ad){if(NET.conn===c)clientLost();return}fail()};c.on('close',lost);c.on('error',lost)});
+ peer.on('error',e=>{if(ad){if(NET.peer!==peer)return;if(e.type==='peer-unavailable'){NET.conn=null;autoLost()}return}fail()})}
+function bgAdopt(peer,c,m){clearTimeout(BG.to);BG.peer=null;BG.busy=0;BG.on=0;clearTimeout(BG.t);
+ NET.peer=peer;NET.conn=c;NET.role='client';NET.auto=1;NET.target=ROOM;NET.code='🏠';NET.tries=0;NET.warn='';NET.myChar=bgMe().c;AUTO.mig=0;AUTO.busy=false;bindPeerCommon(peer);
+ S=baseS([]);S.tasks=[];S.client=1;clientMsg(m)}            // běžící hra se jen přepne na stav hostitele (bez menu, bez restartu smyčky)
+window.addEventListener('online',()=>{if(BG.on&&!BG.busy){BG.n=0;bgSched(800)}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&BG.on&&!BG.busy){BG.n=Math.min(BG.n,1);bgSched(500)}});
+const _h2SoloBG=h2Solo;h2Solo=function(c,why){bgStop();_h2SoloBG(c,why);bgStart()};
+const _netLeaveBG=netLeave;netLeave=function(){bgStop();_netLeaveBG()};
+const _dmBG=drawMenu;drawMenu=function(){if(!$('menu').classList.contains('hide'))bgStop();_dmBG()};
 drawMenu();
 
 </script></body></html>
