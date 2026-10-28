@@ -97,7 +97,7 @@ body.home-on #musB{display:none}
 <div id="help" class="sheet hide"><div class="sbox glass" style="text-align:left"><div class="shd"><b>❓ Jak hrát</b><button class="lnk" id="helpX">✖</button></div>
  <p class="shp">👶 Hlídej Arianku: dej dudlík, když pláče, nakrm ji, přebal ji, seber nebezpečné věci. Pomáhej rodině (+15), sklenice nos do myčky (+10). Po přebalení se umyj v koupelně!</p>
  <p class="shp">🌪️ <b>Kristof s Matýskem dělají binec!</b> Občas se rozdovádí, honí se po domě a všude nechávají hračky, polštáře a ponožky. Doběhni je a dej ✋ AKCE = uklidníš je (+25 a 🪙5). Každý jejich nepořádek ukliď (+15 a 🪙2). Když je uklidníš oba, dostaneš bonus!</p>
- <p class="shp">🏃‍♀️ <b>Míša pořád nestíhá!</b> Běhá ke dveřím a zase zpátky („Já už musím jít! Už jsem tam měla být!“). Občas ztratí 🔑 klíče, 📱 mobil nebo 👜 kabelku – najdi věc (✋ AKCE = seber), přines ji Míše a dej jí ji (+20 a 🪙4). Pak vyběhne ze dveří… a za chvíli se vrátí, že si něco zapomněla 😅.</p>
+ <p class="shp">🏃‍♀️ <b>Míša pořád nestíhá!</b> Běhá ke dveřím a zase zpátky („Já už musím jít! Už jsem tam měla být!“). Občas ztratí 🔑 klíče, 📱 mobil nebo 👜 kabelku – najdi věc (✋ AKCE = seber), přines ji Míše a dej jí ji (+20 a 🪙4). Pak vyběhne ze dveří… a za chvíli se vrátí, že si něco zapomněla 😅. A občas chodí po domě, zastaví se u nepořádku a lamentuje: „Ježíš, včera jsem tu uklízela a tu je zase nepořádek!“ 😩 Když ten nepořádek hned uklidíš (✋ AKCE), Míša je ráda (+5 a 🪙1 navíc).</p>
  <p class="shp">🐈 <b>Kočky a pes</b> (Micka, Uhlík, Mourek a pejsci) pobíhají po celém domě. Když kočka vyskočí na gauč k dědovi Pavlovi, děda se zlobí a kočku odprskne – vyletí obloukem pryč (nic se jí nestane!). Můžeš ji odehnat sám ✋ AKCE (+10 a 🪙2, za dědu Pavla „Kšá!“ +15). Když tam kočka sedí moc dlouho, děda je mrzutý 😤.</p>
  <p class="shp">🚲 <b>Děda Martin a Anička přijeli na kolech!</b> „Cink cink!“ – zaparkují u dveří a volají děcka ven („Jdeme na kolo! Hura ven, děcka!“). Děti se za nimi rozběhnou. Najdi po domě 3 helmy ⛑️ (+10, všechny +20) a pošli děcka ven (✋ u dítěte = „Pošli na kolo“ +10). Pozor, Arianka by chtěla jet taky a leze ke dveřím! Když hraješ za dítě, ✋ u Martina nebo Aničky = „Jet na kolo“ (+20). Pak odjedou a děcka se po chvíli vrátí.</p>
  <p class="shp">📱 <b>3D:</b> levá páčka = chůze • táhni prstem vpravo = otáčení • ✋ AKCE • 🔄 předmět (dudlík / lahev / plenka) • 🗺️ mapa domu</p>
@@ -1560,6 +1560,35 @@ const _bikeUpdG=bikeUpd;bikeUpd=function(dt){const B=S.bike;if(B&&B.street&&S.d3
    F.forEach((n,i)=>{const ri=S.N.find(q=>q.c.id===n.fol)||R[0];if(!ri)return;const a=i*2.1+1;if(ri.out&&ri.y>WH-60){if(n.y<WH-40)moveTo(n,FD.x,FD.y,150,dt);if(dist(n.x,n.y,FD.x,FD.y)<36||n.y>=WH-40){goStraight(n,ri.x+Math.cos(a)*45,ri.y-40-i*20,170,dt)}}else moveTo(n,ri.x+Math.cos(a)*55,ri.y+Math.sin(a)*40,118,dt)});
    if(all||!R.length){R.forEach(n=>{n.x=FD.x;n.y=FD.y;n.out=0;n.stk=9});_bikeUpdG(dt)}return}}
  return _bikeUpdG(dt)};
+// ================= v19: Míša chodí po domě a nadává na nepořádek (všechny režimy, host-authoritative) =================
+const MNAG=['Ježíš, včera jsem tu uklízela a tu je zase nepořádek! 😩','Ježíš, včera jsem tu uklízela a tu je zase nepořádek! 😩','Ježíš, zase binec! 🙄','Já tu včera uklízela! 😤'];
+function nagPick(n){const L=[];(S.mess||[]).forEach(m=>L.push({x:m.x,y:m.y,k:'m',w:m.w?3:1,o:m}));(S.gl||[]).forEach(g=>L.push({x:g.x,y:g.y,k:'g',w:1,o:g}));
+ if(!L.length)return null;const W=L.filter(q=>q.w>1);const A=W.length&&Math.random()<.75?W:L;return A[Math.floor(Math.random()*A.length)]}
+function nagAlive(g){return g&&(g.k==='m'?(S.mess||[]).includes(g.o):(S.gl||[]).includes(g.o))}
+const _misaUpdQ=misaUpd;misaUpd=function(n,dt){if(S.nagCd==null)S.nagCd=14+Math.random()*8;if(S.nag){S.nag.t-=dt;if(S.nag.t<=0)S.nag=null}
+ if(n.ms==='nag'&&!n.need){const g=n.ng;
+  if(!nagAlive(g.tg)&&g.ph==='go'){const q=nagPick(n);if(q){g.tg=q;n.stk=0}else{n.ms='r';n.mp='door';S.nagCd=20;return}}
+  if(g.ph==='go'){n.pose='rush';if(moveTo(n,g.tg.x+30,g.tg.y+8,105,dt)<28||n.stk>2.2){g.ph='stand';g.t=4.6;n.stk=0;n.pose='nag';n.dir=g.tg.x<n.x?-1:1;mSay(n,R1(MNAG),1);S.nag={x:g.tg.x,y:g.tg.y,t:14};snd(330,.18,'triangle',.05)}return}
+  n.pose='nag';g.t-=dt;if(g.t<2.2&&!g.two){g.two=1;mSay(n,R1(['Kdo to tu zase nechal?! 🙈','To snad není možný… 🤦‍♀️','Ježíš, zase binec! 🙄']))}
+  if(g.t<=0){n.ms='r';n.mp='door';n.pose='rush';S.nagCd=22+Math.random()*16;mSay(n,R1(MRUSH))}return}
+ _misaUpdQ(n,dt);
+ if(n.pose==='away'||n.need||n.ms==='lost'||n.ms==='leave'||n.ms==='nag')return;
+ S.nagCd-=dt;if(S.nagCd<=0){const q=nagPick(n);if(q){n.ms='nag';n.ng={ph:'go',tg:q,t:0};n.stk=0}else S.nagCd=8}};
+function nagHappy(p){const n=S.N.find(q=>q.c.id==='misa');addPts(p,5);p.coins+=1;burst(S.nag.x,S.nag.y-40,'💖');S.nag=null;
+ const t='Jé, díky, '+p.c.n+'! Míša je ráda 😊';if(n&&n.pose!=='away'){mSay(n,t,1);if(n.ms==='nag'){n.ng.t=Math.min(n.ng.t,1.2);n.ng.two=1}}else chat('Míša',t,'#ec4899');jingle([700,900,1200])}
+const _ctxQ=ctx;ctx=function(p){const r=_ctxQ(p);if(r&&r.f&&(r.l==='Ukliď'||r.l==='Seber sklenici')&&S.nag&&dist(p.x,p.y,S.nag.x,S.nag.y)<170){const f0=r.f;return{...r,f:()=>{f0();if(S.nag)nagHappy(p)}}}return r};
+// Míša played by a player: occasional line near mess
+const _needsUpdQ=needsUpd;needsUpd=function(dt){_needsUpdQ(dt);S.P.forEach(p=>{if(p.c.id!=='misa'||p.need||p.off)return;p.ngT=(p.ngT??8)-dt;if(p.ngT>0)return;
+ const near=(S.mess||[]).concat(S.gl||[]).some(m=>dist(p.x,p.y,m.x,m.y)<110);if(near){p.ngT=20+Math.random()*12;p.fuj=R1(MNAG);p.fujT=3;chat(p.c.n,p.fuj,p.c.col)}else p.ngT=1.5})};
+// ---- drawing: 2D / Retro 3D ----
+const _npcQ=npc;npc=function(n){if(n.pose!=='nag'||n.need)return _npcQ(n);const{c,x:px,y:gy,t}=n;const hy=avatar(c,px,gy,{dir:Math.sin(t*9)>0?1:-1,wave:Math.sin(t*7)>0});
+ x.font='20px system-ui';x.textAlign='center';x.fillText('💢',px+30,hy-8);x.fillText('🧹',px-30,gy-30);nameTag(c.n,px,hy-28,'#ffffffcc');if(n.bubT>0)bubble(n.bub,px,hy-44)};
+const _npcLookQ=npcLook;npcLook=function(n){if(n.pose!=='nag'||n.need)return _npcLookQ(n);const f=Math.floor(n.t*10/1.57)&3;const o={wave:f&1?1:-1},L={pr:[['💢',30,-120,20],['🧹',-32,-40,20]]};
+ return{c:bodySpr('N'+n.c.id+'|nag'+f,n.c,o,L,imOK(SQ[n.c.id])),z:0}};
+// ---- drawing: new 3D ----
+const _poseOfQ=poseOf;poseOf=function(o,isP){const P=_poseOfQ(o,isP);if(!o.need&&(o.pose==='nag'||(isP&&o.c&&o.c.id==='misa'&&o.fujT>0&&MNAG.includes(o.fuj)))){P.nag=1;let b=null,bd=130;(S.mess||[]).concat(S.gl||[]).forEach(m=>{const d=dist(o.x,o.y,m.x,m.y);if(d<bd){bd=d;b=m}});if(b)P.face=Math.atan2(b.y-o.y,b.x-o.x)}return P};
+const _avPoseQ=avPose;avPose=function(a,P,X,Y,zj,dt,head){const r=_avPoseQ(a,P,X,Y,zj,dt,head);const t=S.t;
+ if(P.nag){a.aL.rotation.x=-.25;a.aL.rotation.z=-.55;a.aR.rotation.x=-2.3;a.aR.rotation.z=Math.sin(t*12)*.3;a.hd.rotation.y=Math.sin(t*9)*.38;avProps(a,[['💢',22,96,8,16]])}else if(a.hd.rotation.y)a.hd.rotation.y=0;return r};
 // ---------- MUSIC: online = YouTube IFrame player (The Daughters of Eve – Hey Lover), offline = own chiptune loop ----------
 const YTID='KfE1QKu-h5Q';
 const MUS={on:LS.get('music',true)!==false,mode:null,yt:null,ytOk:false,started:false,chipT:null,next:0,step:0,g:null};
