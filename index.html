@@ -122,6 +122,25 @@ body.home-on #musB{display:none}
  .h2grid .pc img{max-width:min(84px,9vw,18vh)}.h2grid .pc b{font-size:11.5px}
  .h2play{padding:14px 12px}
 }
+/* v25 */
+.h2sec{grid-column:1/-1;font-weight:900;font-size:13px;color:#fde68a;padding:2px 6px 0;text-align:left;letter-spacing:.3px}.h2sec small{color:#a5b4fc;font-weight:700}
+@media (orientation:portrait){.h2grid{grid-template-columns:repeat(4,1fr)!important;gap:6px!important}.h2grid .pc img{max-width:min(84px,19vw,9.2vh)!important}.h2grid .pc b{font-size:12px!important}}
+@media (orientation:landscape){.h2grid{grid-template-columns:repeat(6,1fr)!important;gap:5px!important}.h2grid .pc{padding:3px 2px!important}.h2grid .pc img{max-width:min(70px,8vw,13.5vh)!important;margin-bottom:1px!important}.h2grid .pc b{font-size:11px!important}.h2sec{padding:0 6px;font-size:11px}}
+.pcEd{position:absolute;top:2px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.4);z-index:2}
+#xprof{position:fixed;inset:0;z-index:9999;background:rgba(10,8,30,.82);display:flex;align-items:center;justify-content:center;font-family:system-ui;color:#fff}#xprof.hide,#xcrop.hide{display:none}
+.xbox{width:min(560px,96vw);max-height:94vh;overflow:auto;background:#1e1b4b;border-radius:20px;padding:12px 14px;box-shadow:0 10px 40px #000}
+.xhd{display:flex;justify-content:space-between;align-items:center;font-size:17px}.xhd button{background:#ffffff22;border:0;color:#fff;border-radius:50%;width:34px;height:34px;font-size:16px}
+.xtop{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:8px 0}.xfacew{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.xface{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid #f472b6}.xfb{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+#xprev{width:150px!important;height:170px!important;position:static!important;background:radial-gradient(#4c1d95,#1e1b4b 70%);border-radius:16px}
+.xbtn{display:inline-block;background:#4f46e5;color:#fff;border:0;border-radius:12px;padding:8px 11px;font-weight:800;font-size:13px;position:relative;overflow:hidden}.xbtn input{position:absolute;inset:0;opacity:0}.xg{background:#ffffff26}.xok{background:#ec4899}
+.xsec{font-size:12px;font-weight:800;color:#c7d2fe;margin:7px 0}.xsec input#xnk{display:block;width:100%;margin-top:4px;padding:8px 10px;border-radius:10px;border:0;font-size:15px;box-sizing:border-box}
+.xsw{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}.xsw i{width:26px;height:26px;border-radius:50%;border:2px solid #ffffff44;display:block}.xsw i.on{border:3px solid #fff;box-shadow:0 0 0 2px #ec4899}
+.xcp{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;position:relative;overflow:hidden}.xcp input{position:absolute;inset:0;opacity:0}
+.xch{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}.xch b{background:#ffffff1f;border-radius:10px;padding:6px 9px;font-size:12px}.xch b.on{background:#ec4899}
+.xft{display:flex;justify-content:space-between;gap:8px;margin-top:10px}.xft .xbtn{flex:1;padding:12px;font-size:15px}
+#xcrop{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center}.xcbox{background:#1e1b4b;padding:14px;border-radius:18px;text-align:center;width:min(320px,94vw)}
+#xcc{width:min(280px,80vw)!important;height:min(280px,80vw)!important;position:static!important;border-radius:14px;margin:8px 0;touch-action:none}#xcz{width:100%}
 </style></head><body>
 <canvas id="c"></canvas>
 <div id="menu" class="scr home">
@@ -210,7 +229,11 @@ const CH=[
  {id:'paja',n:'Pája',r:'máma Arianky',col:'#db2777',leg:'#1e293b'},
  {id:'kristof',n:'Kristof',r:'kamarád',col:'#1e3a8a',leg:'#7f1d1d'},
  {id:'martin',n:'Děda Martin',r:'děda',col:'#60a5fa',leg:'#1e293b'},
- {id:'anicka',n:'Anička',r:'',col:'#14b8a6',leg:'#312e81'}];
+ {id:'anicka',n:'Anička',r:'',col:'#14b8a6',leg:'#312e81'},
+ {id:'nugi',n:'Nugi (Lukáš)',r:'Kopřivnice',col:'#1f2937',leg:'#111827',g:'k'},
+ {id:'lenka',n:'Lenka',r:'Kopřivnice',col:'#f9a8d4',leg:'#1e293b',g:'k'},
+ {id:'domik',n:'Domíšek',r:'Kopřivnice',col:'#f8fafc',leg:'#3b5b9a',g:'k'},
+ {id:'ema',n:'Emíčka',r:'Kopřivnice',col:'#a78bfa',leg:'#a78bfa',g:'k'}];
 const SRC=i=>(window.URI?URI[i]:'img/'+i+'.png');
 const IMG={},SQ={};[...CH.map(c=>c.id),'mimino','kuba_spi'].forEach(i=>{const m=new Image();m.src=SRC(i);IMG[i]=m;const q=new Image();q.src=SRC('sq_'+i);SQ[i]=q});
 // ---------- persistence ----------
@@ -265,10 +288,14 @@ function SOL(){return S&&S.d3?OBS.concat(D3W):OBS}
 const TABLE=OBS[2],SINKP={x:105,y:1140},DWP={x:90,y:790},TVP={x:535,y:250};
 const DOORS=[{x:0,y:880,w:14,h:150,n:'KUCHYŇ',side:'l'},{x:WW-14,y:700,w:14,h:220,n:'CHODBA',side:'r'}];
 const NPCPOS={babicka:{x:130,y:315,pose:'sit'},kuba:{x:615,y:600,pose:'phone'},maty:{x:620,y:880,pose:'play'},adam:{x:535,y:315,pose:'game'},deda:{x:262,y:315,pose:'paper'},paja:{x:480,y:1060,pose:'walk'},
- kiki:{x:420,y:1070,pose:'dance'},karin:{x:650,y:1100,pose:'read'},misa:{x:700,y:430,pose:'rush'},kristof:{x:690,y:975,pose:'play'},martin:{x:520,y:1250,pose:'away'},anicka:{x:590,y:1250,pose:'away'}};
+ kiki:{x:420,y:1070,pose:'dance'},karin:{x:650,y:1100,pose:'read'},misa:{x:700,y:430,pose:'rush'},kristof:{x:690,y:975,pose:'play'},martin:{x:520,y:1250,pose:'away'},anicka:{x:590,y:1250,pose:'away'},nugi:{x:4800,y:2640,pose:'away'},lenka:{x:4860,y:2640,pose:'away'},domik:{x:4920,y:2640,pose:'away'},ema:{x:4980,y:2640,pose:'away'}};
 const LINES={_:['Utíká!','Ten je rychlej! 😅','Ťuťuťu! 🥰','Fuj, něco tu smrdí! 🤢','Pozor, pod stolem! 🙈','Mimiiinooo! 👶'],
  babicka:['Za nás se to nedělo…','Dej mu dudlíček! 🍼','Ach jo, ty jsi rošťák!'],kuba:['Chrrr… zzz 😴','Mmm… pět minut…','Zzz… kdo křičí?'],
- maty:['Brrrm brrrm! 🚗','Hraj si se mnou!','To je moje autíčko!','Kristofe, pojď blbnout! 🤪'],martin:['Jdeme na kolo! 🚲','Hura ven, děcka!','Kdo jede se mnou? 🚴'],anicka:['Hura ven, děcka! 🌞','Helmy na hlavu! ⛑️','Jdeme na kolo! 🚲'],kristof:['Matýsku, chyť mě! 🏃','Jdeme blbnout! 🤪','Já nic, to Matýsek! 😇','Kdo udělá větší binec? 😜'],adam:['Chytej míč! ⚽','Já jsem rychlejší!'],kiki:['La la la 🎵','Arianko, tancuj!'],
+ maty:['Brrrm brrrm! 🚗','Hraj si se mnou!','To je moje autíčko!','Kristofe, pojď blbnout! 🤪'],martin:['Jdeme na kolo! 🚲','Hura ven, děcka!','Kdo jede se mnou? 🚴'],anicka:['Hura ven, děcka! 🌞','Helmy na hlavu! ⛑️','Jdeme na kolo! 🚲'],
+nugi:['Čau, jdeme na Mekáč? 🍔','Z Kopřivnice to byla jízda! 🚲','Arianko, ty jsi ale šikulka! 🥰'],
+lenka:['Ahoj Arianko! 💕','Děcka, helmy! ⛑️','Pohlídám ji, běžte si odpočinout 😊'],
+domik:['Jedeme na kolo! 🚲','Já chci hranolky! 🍟','Arianko, podívej! 😄'],
+ema:['Ahoj Arianko! 🎀','Můžu ji pochovat? 🥰','Jdeme do Mekáče? 🍦'],kristof:['Matýsku, chyť mě! 🏃','Jdeme blbnout! 🤪','Já nic, to Matýsek! 😇','Kdo udělá větší binec? 😜'],adam:['Chytej míč! ⚽','Já jsem rychlejší!'],kiki:['La la la 🎵','Arianko, tancuj!'],
  karin:['Psst, čtu si 📖','Ještě jedna kapitola…'],misa:['Já už musím jít! 🏃‍♀️','Už jsem tam měla být! ⏰','V pohodě, stihnu to… 😌','Ještě minutku a letím!','Ahoj prcku! 👋 Musím běžet!'],deda:['Za mých časů…','Kde mám brýle? 👓','Arianko, pojď k dědovi!'],paja:['Arianko, kde jsi? 👶','Kde jsem nechala tu sklenici? 🤷‍♀️','Ještě kafíčko… ☕']};
 function rr(a,b,c,d,r,f){x.fillStyle=f;x.beginPath();x.roundRect(a,b,c,d,r);x.fill()}
 function label(t,px,py,col='#000a'){x.font='bold 13px system-ui';x.textAlign='center';x.fillStyle=col;x.fillText(t,px,py)}
@@ -1172,11 +1199,14 @@ function dog3(g,dt){if(!g.n3){g.n3=1;g.x=FD.x;g.y=FD.y;g.life=11;g.tx=null}g.lif
  const ox=g.x;moveTo(g,g.tx,g.ty,170,dt);g.vx=(g.x-ox)>=0?1:-1}
 // ---------- Děda Martin + Anička on bikes ----------
 const BKIDS=['adam','maty','kiki','kristof'],BPARK=[{x:660,y:880},{x:700,y:905}];
-function bikeStart(){const R=S.N.filter(n=>(n.c.id==='martin'||n.c.id==='anicka')&&n.pose==='away');if(!R.length)return false;
- R.forEach((n,i)=>{n.x=FD.x+i*30;n.y=FD.y;n.pose='bike';n.tx=null;n.stk=0});S.bike={ph:'arrive',t:0,bk:[],riders:R.map(n=>n.c.id),rode:{},jT:3,bT:6};
- [0,180,600,780].forEach(t=>setTimeout(()=>snd(1900,.09,'triangle',.09),t));const nm=R.map(n=>n.c.n).join(' a ');
- banner('🚲 Cink cink! '+(R.length>1?'Přijeli':'Přijel(a)')+' na kolech!','Chtějí děcka ven • najdi helmy ⛑️');say('🔔 Cink cink! 🚲 '+nm+' '+(R.length>1?'přijeli':'přijel(a)')+' na kolech a volají děcka ven!');
- R.forEach(n=>{n.bub='Cink cink! 🔔';n.bubT=2.4});return true}
+const VGRP=[['martin','anicka'],['nugi','lenka','domik','ema']];
+function bikeStart(){let R=[],gi=-1;const v0=S.visI||0;for(let k=0;k<VGRP.length&&!R.length;k++){const j=(v0+k)%VGRP.length;R=S.N.filter(n=>VGRP[j].includes(n.c.id)&&n.pose==='away');gi=j}if(!R.length)return false;S.visI=gi+1;
+ const nug=gi===1,jog=nug&&Math.random()<.45,pz=jog?'jog':'bike';
+ R.forEach((n,i)=>{n.x=FD.x+i*30;n.y=FD.y;n.pose=pz;n.tx=null;n.stk=0});S.bike={ph:'arrive',t:0,bk:[],riders:R.map(n=>n.c.id),rode:{},jT:3,bT:6,nug,jog};
+ [0,180,600,780].forEach(t=>setTimeout(()=>snd(1900,.09,'triangle',.09),t));const nm=R.map(n=>n.c.n).join(', ');
+ if(nug){banner(jog?'🏃 Nuginí přiběhli z Kopřivnice!':'🚲 Nuginí přijeli z Kopřivnice!','Pohlídají Arianku • berou děcka ven a na Mekáč 🍔');say((jog?'🏃 Přiběhli joggingem':'🚲 Přijeli na kolech')+' z Kopřivnice: '+nm+'!')}
+ else{banner('🚲 Cink cink! '+(R.length>1?'Přijeli':'Přijel(a)')+' na kolech!','Chtějí děcka ven • najdi helmy ⛑️');say('🔔 Cink cink! 🚲 '+nm+' '+(R.length>1?'přijeli':'přijel(a)')+' na kolech a volají děcka ven!')}
+ R.forEach(n=>{n.bub=nug?R1(LINES[n.c.id]):'Cink cink! 🔔';n.bubT=2.4});return true}
 function riders(){return S.bike?S.N.filter(n=>S.bike.riders.includes(n.c.id)&&n.pose!=='away'):[]}
 function kidFollow(n,ri){n.fol=ri.c.id;n.wp2=n.pose;n.hx2=n.x;n.hy2=n.y;n.pose='fol';n.home=0;n.bub=R1(['Jóóó, kolo! 🚲','Já chci jet první!','Hurá ven! 🌞','Počkejte na mě! 🏃']);n.bubT=2.4;chat(n.c.n,n.bub,n.c.col)}
 function bikeUpd(dt){if(S.bikeCd==null)S.bikeCd=70+Math.random()*20;const B=S.bike;
@@ -1190,10 +1220,10 @@ function bikeUpd(dt){if(S.bikeCd==null)S.bikeCd=70+Math.random()*20;const B=S.bi
    if(Math.random()<dt*.3){n.bub=R1(LINES[n.c.id]);n.bubT=2.2;if(Math.random()<.3)chat(n.c.n,n.bub,n.c.col)}});
   B.jT-=dt;if(B.jT<=0&&R.length){B.jT=6+Math.random()*3;const k=S.N.find(n=>BKIDS.includes(n.c.id)&&!n.need&&n.pose!=='fol'&&n.pose!=='away'&&!n.home);if(k)kidFollow(k,R1(R))}
   B.bT-=dt;if(B.bT<=0){B.bT=9+Math.random()*4;if(b.state!=='held'&&b.hide<=0&&!b.danger&&!S.change){const d=dist(b.x,b.y,FD.x,FD.y)||1;b.state='run';b.vx=(FD.x-b.x)/d*100;b.vy=(FD.y-b.y)/d*100;b.st=3;say('👶 Arianka chce taky na kolo! Leze ke dveřím – chyť ji! 🚲')}}
-  if(B.t<=0){B.ph='leave';B.bk=[];R.forEach(n=>{n.pose='bike';n.stk=0});S.helm=[];say('🚲 Vyrážíme! Pá pá! 👋')}return}
+  if(B.t<=0){B.ph='leave';B.bk=[];R.forEach(n=>{n.pose=B.jog?'jog':'bike';n.stk=0});S.helm=[];say('🚲 Vyrážíme! Pá pá! 👋')}return}
  if(B.ph==='leave'){let all=1;R.forEach(n=>{if(moveTo(n,FD.x,FD.y,110,dt)>30&&n.stk<3)all=0});
   if(all||!R.length){R.forEach(n=>{n.pose='away';n.x=NPCPOS[n.c.id].x;n.y=NPCPOS[n.c.id].y});F.forEach(n=>{n.pose='away';n.bubT=0});B.ph='gone';B.t=25+Math.random()*10;
-   say(F.length?'🚲 Odjeli s děckama na výlet ('+F.map(n=>n.c.n).join(', ')+'). Doma je chvilku klid… 😌':'🚲 Odjeli na výlet. Pá pá!')}return}
+   say(B.nug?'🍔 Nuginí vzali '+(F.length?'děcka ('+F.map(n=>n.c.n).join(', ')+')':'Domíška a Emíčku')+' do Mekáče a pak domů do Kopřivnice.':F.length?'🚲 Odjeli s děckama na výlet ('+F.map(n=>n.c.n).join(', ')+'). Doma je chvilku klid… 😌':'🚲 Odjeli na výlet. Pá pá!')}return}
  if(B.ph==='gone'){B.t-=dt;if(B.t<=0){const K=S.N.filter(n=>n.fol);K.forEach(n=>{n.x=FD.x;n.y=FD.y;n.home=1;n.ht=0;n.hx=n.hx2;n.hy=n.hy2;n.wp=n.wp2;n.pose='walk2';n.fol=null;n.bub='To byla jízda! 😄';n.bubT=2.4});
   if(K.length)say('🚲 Děcka se vrátila z kola! To byla jízda! 😄');S.bike=null;S.bikeCd=120+Math.random()*40}}}
 // ---------- host update hook ----------
@@ -1417,7 +1447,7 @@ function poseOf(o,isP){const n=o.need,P={sit:0,arm:0,fwd:0,wave:0,lie:0,bend:0,t
  if(isP||n)return P;
  switch(o.pose){case'sit':P.sit=1;P.fwd=1;P.pr.push(['🧶',0,56,20,16]);break;case'paper':P.sit=1;P.fwd=1;P.pr.push(['📰',0,66,22,26]);break;case'phone':P.sit=1;P.fwd=1;P.pr.push(['📱',0,62,20,13]);P.face=-Math.PI/2;break;
   case'game':P.sit=1;P.fwd=1;P.pr.push(['🎮',0,48,20,15]);P.face=-Math.PI/2;break;case'play':P.sit=1;P.pr.push(['🚗',-26,6,22,18],['🧸',26,8,20,20]);break;case'read':P.fwd=1;P.pr.push(['📖',0,76,20,18]);break;
-  case'dance':P.dance=1;P.arm=1;break;case'rush':P.pr.push(['👜',20,40,6,16]);break;case'call':P.wave=1;break;case'bike':P.bike=1;break;case'sleep':P.sit=1;P.tilt=1;break}return P}
+  case'dance':P.dance=1;P.arm=1;break;case'rush':P.pr.push(['👜',20,40,6,16]);break;case'call':P.wave=1;break;case'bike':P.bike=1;break;case'jog':P.run=1;break;case'sleep':P.sit=1;P.tilt=1;break}return P}
 function avPose(a,P,X,Y,zj,dt,head){// movement from position deltas
  const dx=a.lx==null?0:X-a.lx,dy=a.ly==null?0:Y-a.ly,v=dt>0?Math.hypot(dx,dy)/dt:0;a.lx=X;a.ly=Y;const mv=P.bike?0:Math.min(1,v/150);a.mv=(a.mv||0)+(mv-(a.mv||0))*Math.min(1,dt*10);
  let th=head!=null?head:v>12?Math.atan2(dy,dx):(P.face!=null&&v<5?P.face:null);if(th==null&&P.sit&&v<5)th=Math.PI/2;if(th!=null)a.h+=angD(a.h,th)*Math.min(1,dt*(P.bike?4:10));
@@ -1579,12 +1609,12 @@ cv.addEventListener('pointermove',e=>{const t=D3.tp[e.pointerId];if(t&&t.y!=null
 cv.addEventListener('wheel',e=>{if(!glOK())return;GL.dist=Math.max(70,Math.min(260,GL.dist+e.deltaY*.2));e.preventDefault()},{passive:false});
 addEventListener('keydown',e=>{if(run&&glOK()&&(e.code==='KeyV'||e.code==='KeyC'))GL.fp^=1});
 // ---------- bikes ride in from the street (3D only; host-authoritative) ----------
-const OUTP=()=>[[FD.x,FD.y],[800,798],[935,830],[935,2300],[935,2465],[-1500,2465]];
-const _bikeStartG=bikeStart;bikeStart=function(){const r=_bikeStartG();if(r&&S.d3&&S.bike){riders().forEach((n,i)=>{n.x=-1100-i*110;n.y=2465;n.out=1;n.wi=4});S.bike.street=1}return r};window.bikeStart=bikeStart;
+const OUTP=()=>[[FD.x,FD.y],[800,798],[935,830],[935,2300],[935,2465],S&&S.bike&&S.bike.nug?[5300,2465]:[-1500,2465]];
+const _bikeStartG=bikeStart;bikeStart=function(){const r=_bikeStartG();if(r&&S.d3&&S.bike){riders().forEach((n,i)=>{n.x=S.bike.nug?4700+i*110:-1100-i*110;n.y=2465;n.out=1;n.wi=4});S.bike.street=1}return r};window.bikeStart=bikeStart;
 function goStraight(o,tx,ty,sp_,dt){const d=dist(o.x,o.y,tx,ty);if(d>1){const s=Math.min(d,sp_*dt);o.dir=Math.sign(tx-o.x)||o.dir||1;o.x+=(tx-o.x)/d*s;o.y+=(ty-o.y)/d*s}return dist(o.x,o.y,tx,ty)}
 const _bikeUpdG=bikeUpd;bikeUpd=function(dt){const B=S.bike;if(B&&B.street&&S.d3){const R=riders(),P=OUTP();
-  if(B.ph==='arrive'&&R.some(n=>n.out)){R.forEach((n,i)=>{if(!n.out)return;if(n.wi==null)n.wi=4;const q=P[n.wi];if(goStraight(n,q[0]+(n.wi<=2?0:i*-26),q[1]+(n.wi===4?i*24:0),n.wi>=4?330:n.wi===3?260:150,dt)<10){n.wi--;if(n.wi<0){n.out=0;n.wi=null}}});return}
-  if(B.ph==='leave'){const F=S.N.filter(n=>n.pose==='fol');let all=1;R.forEach((n,i)=>{if(!n.out){if(moveTo(n,FD.x,FD.y,110,dt)<30||n.stk>3){n.out=1;n.wi=1}all=0}else if(n.wi<P.length){const q=P[n.wi];if(goStraight(n,q[0]-i*40,q[1]+(n.wi>=4?i*24:0),n.wi>=4?330:n.wi===3?260:150,dt)<10)n.wi++;all=0}});
+  if(B.ph==='arrive'&&R.some(n=>n.out)){R.forEach((n,i)=>{if(!n.out)return;if(n.wi==null)n.wi=4;const q=P[n.wi];if(goStraight(n,q[0]+(n.wi<=2?0:i*-26),q[1]+(n.wi===4?i*24:0),(n.wi>=4?330:n.wi===3?260:150)*(B.jog?.62:1),dt)<10){n.wi--;if(n.wi<0){n.out=0;n.wi=null}}});return}
+  if(B.ph==='leave'){const F=S.N.filter(n=>n.pose==='fol');let all=1;R.forEach((n,i)=>{if(!n.out){if(moveTo(n,FD.x,FD.y,110,dt)<30||n.stk>3){n.out=1;n.wi=1}all=0}else if(n.wi<P.length){const q=P[n.wi];if(goStraight(n,q[0]-i*40,q[1]+(n.wi>=4?i*24:0),(n.wi>=4?330:n.wi===3?260:150)*(B.jog?.62:1),dt)<10)n.wi++;all=0}});
    F.forEach((n,i)=>{const ri=S.N.find(q=>q.c.id===n.fol)||R[0];if(!ri)return;const a=i*2.1+1;if(ri.out){if(!n.out2){if(moveTo(n,FD.x,FD.y,150,dt)<36||n.stk>3)n.out2=1}else goStraight(n,ri.x+40+i*30,ri.y-30+i*18,ri.wi>=4?330:170,dt)}else moveTo(n,ri.x+Math.cos(a)*55,ri.y+Math.sin(a)*40,118,dt)});
    if(all||!R.length){R.forEach(n=>{n.x=FD.x;n.y=FD.y;n.out=0;n.wi=null;n.stk=9});F.forEach(n=>{n.out2=0;n.x=FD.x;n.y=FD.y});_bikeUpdG(dt)}return}}
  return _bikeUpdG(dt)};
@@ -1744,7 +1774,7 @@ const VH=[// village + town houses [x,y,w,d,h,facade,roof,ridgeAlongY]
  [-29300,1840,480,380,180,'facB','roofD',1],[-28600,2760,460,360,175,'facC','roofR',0],[-30000,2800,440,360,180,'facA','roofR',1]];
 {const fc=['fT1','fT2','fT3','fT4','fT5'];let i=0;for(let x=-40800;x>-42300;x-=400)VH.push([x-320,1850,320,340,250,fc[i++%5],i%2?'roofR':'roofD',0]);
  for(let x=-40700;x>-46300;x-=370){if(x<-41950&&x>-42700)continue;if(x<-44750)continue;VH.push([x-300,2660,300,330,250,fc[i++%5],i%3?'roofR':'roofD',0])}}
-VH.forEach(h=>ws(h[0],h[1],h[2],h[3]));ws(MCB.x,MCB.y,MCB.w,MCB.h);ws(-42500,3120,260,520);ws(-42420,3030,100,100);// Mekáč, church
+VH.forEach(h=>ws(h[0],h[1],h[2],h[3]));ws(MCB.x,MCB.y,MCB.w,MCB.h);ws(4500,2680,640,280);ws(-42500,3120,260,520);ws(-42420,3030,100,100);// Mekáč, church
 ws(-1200,1950,82,200);// Sousedka car (inside plot anyway)
 // ---------- movement hooks ----------
 function canDoor(p,ex){if(!p||!S)return true;const b=S.b;
@@ -1817,10 +1847,12 @@ const _ctxW=ctx;ctx=function(p){const r=_ctxW(p);if(!(S&&S.d3&&S.kc)||p.need||S.
  if(r&&!r.hint&&!LOWP.includes(r.l)&&(!w.pri||['Seber','Dudlík','Nakrm','Přebal','Vstaň'].includes(r.l)))return r;return w};
 // ---------- Mekáč + babysitting ----------
 const MCM=[['hr','🍟','Hranolky',25,'Rychlejší nohy na 30 s'],['bg','🍔','Burger',40,'Síla a rychlost na 45 s'],['hm','🎁','Happy Meal',60,'S hračkou pro Arianku'],['zm','🍦','McFlurry',30,'+5 🪙 a dobrá nálada'],['co','🥤','Cola',15,'Bublinky do nohou na 20 s']];
-const SITP={babicka:30,deda:30,martin:30,anicka:30,adam:25,kiki:25,kuba:35,paja:40,misa:40,karin:40};
-function sitList(){return S.N.filter(n=>SITP[n.c.id]&&n.pose!=='away'&&n.need!=='wild')}
+const SITP={babicka:30,deda:30,martin:30,anicka:30,adam:25,kiki:25,kuba:35,paja:40,misa:40,karin:40,nugi:35,lenka:35};
+const NUGA=['nugi','lenka'],NUGK=['nugi','lenka','domik','ema'];
+function sitList(){return S.N.filter(n=>SITP[n.c.id]&&(n.pose!=='away'||NUGA.includes(n.c.id))&&n.need!=='wild')}
 function doBuy(p,k){if(!p||!S||!S.kc)return;
- if(k.startsWith('sit:')){const id=k.slice(4),n=S.N.find(q=>q.c.id===id),c=SITP[id];if(!n||!c||n.pose==='away'||n.need==='wild'){chat('📱','Tenhle člověk teď nemůže hlídat.','#ffd43b');return}
+ if(k.startsWith('sit:')){const id=k.slice(4),n=S.N.find(q=>q.c.id===id),c=SITP[id];if(n&&NUGA.includes(id)&&n.pose==='away'&&!S.sit&&p.score>=c){n.pose='walk';n.x=FD.x+40;n.y=FD.y+60;chat(n.c.n,'Už běžím z Kopřivnice! 🏃',n.c.col)}
+  if(!n||!c||n.pose==='away'||n.need==='wild'){chat('📱','Tenhle člověk teď nemůže hlídat.','#ffd43b');return}
   if(S.sit){const o=S.N.find(q=>q.c.id===S.sit.id);chat('📱','Už hlídá '+(o?o.c.n:'někdo')+' – ještě '+Math.ceil(S.sit.t)+' s.','#ffd43b');return}
   if(p.score<c){chat('📱',p.c.n+': na hlídání potřebuješ '+c+' ⭐ (máš '+p.score+').','#ffd43b');return}
   p.score-=c;S.sit={id,t:90,by:p.i};n.bub='Jasně, pohlídám ji! 👶💕';n.bubT=3;banner('📱 '+n.c.n+' hlídá Arianku','90 s klidu • zaplatil(a) '+p.c.n+' '+c+' ⭐');chat(n.c.n,'Jasně, pohlídám ji! Běžte si klidně ven 👶💕',n.c.col);jingle([523,659,784]);return}
@@ -1965,7 +1997,18 @@ function homeOut(MT,sc){wMats(MT);
  const S1=wSign('🚲 Příbor 5 km →','#fde047','#111',260,70);S1.position.set(1180,140,2552);S1.rotation.y=Math.PI;sc.add(S1);bx('steel',1178,2554,4,4,0,180);
  const S2=wSign('🚲 Příbor 5 km ↑','#fde047','#111',260,70);S2.position.set(-1700,140,2374);S2.rotation.y=Math.PI/2;sc.add(S2);bx('steel',-1702,2372,4,4,0,180);
  const S3=wSign('Lubina','#fff','#111',220,80,1);S3.position.set(-2700,150,2376);S3.rotation.y=-Math.PI/2;sc.add(S3);const S3b=wSign('Lubina','#fff','#111',220,80,2);S3b.position.set(-2701,150,2376);S3b.rotation.y=Math.PI/2;sc.add(S3b);bx('steel',-2704,2374,6,4,0,150);
+ nugPanel(sc);
  wWorld(MT,sc)}
+function nugPanel(sc){const x=4500,y=2680,w=640,d=280,H=560;
+ const ft=gtex(256,224,(g,W,Hh)=>{g.fillStyle='#e7e2d6';g.fillRect(0,0,W,Hh);for(let f=0;f<5;f++){g.fillStyle=['#f4a261','#a8dadc','#e9c46a','#90be6d','#f4a261'][f];g.fillRect(0,f*44+40,W,4);for(let i=0;i<6;i++){g.fillStyle=(f===1&&i===3)?'#fde68a':'#3d5a80';g.fillRect(10+i*41,f*44+8,26,26)}}});
+ const fm=new THREE.MeshLambertMaterial({map:ft}),pl=gm('#d6d3cb');const m=new THREE.Mesh(new THREE.BoxGeometry(w,H,d),[pl,pl,gm('#9ca3af'),pl,fm,fm]);m.position.set(x+w/2,H/2,y+d/2);sc.add(m);
+ bx('steel',x-6,y-6,w+12,d+12,H,8);
+ for(let f=1;f<5;f++)for(let i=0;i<3;i++){const bx0=x+60+i*210;const b=new THREE.Mesh(new THREE.BoxGeometry(110,8,34),pl);b.position.set(bx0+55,f*112,y-17);sc.add(b);const r=new THREE.Mesh(new THREE.BoxGeometry(110,34,3),gm(f===2&&i===1?'#ec4899':'#94a3b8'));r.position.set(bx0+55,f*112+21,y-33);sc.add(r)}
+ const dr=new THREE.Mesh(new THREE.BoxGeometry(90,120,4),gm('#7c2d12'));dr.position.set(4820,60,y-2);sc.add(dr);const st=new THREE.Mesh(new THREE.BoxGeometry(170,10,60),gm('#9ca3af'));st.position.set(4820,5,y-30);sc.add(st);
+ const sg=wSign('🏠 Nuginí · 3. patro','#1d4ed8','#fff',300,60);sg.position.set(4820,160,y-5);sg.rotation.y=Math.PI;sc.add(sg);
+ const pk=wSign('Kopřivnice','#fff','#111',240,80,1);pk.position.set(4250,150,2378);pk.rotation.y=-Math.PI/2;sc.add(pk);const pk2=wSign('Kopřivnice','#fff','#111',240,80,2);pk2.position.set(4249,150,2378);pk2.rotation.y=Math.PI/2;sc.add(pk2);bx('steel',4246,2376,6,4,0,150);
+ const dk=wSign('🚲 Kopřivnice 8 km →','#fde047','#111',280,70);dk.position.set(2700,140,2552);dk.rotation.y=Math.PI;sc.add(dk);bx('steel',2698,2554,4,4,0,180);
+ const dk2=wSign('🏃 Kopřivnice →','#fde047','#111',240,64);dk2.position.set(1500,140,2374);sc.add(dk2);bx('steel',1498,2372,4,4,0,180)}
 function wSign(t,bg,fg,w,h,town){const c=gtex(w*2,h*2,(g,W,Hh)=>{g.fillStyle=bg;g.fillRect(0,0,W,Hh);g.strokeStyle=fg;g.lineWidth=town?10:6;g.strokeRect(5,5,W-10,Hh-10);g.fillStyle=fg;g.textAlign='center';g.textBaseline='middle';
   g.font='bold '+Math.round(Hh*(town?.5:.42))+'px system-ui';g.fillText(t,W/2,Hh*(town?.45:.52));if(town){g.font=Math.round(Hh*.16)+'px system-ui';g.fillText('okres Nový Jičín',W/2,Hh*.8)}
   if(town===2){g.strokeStyle='#dc2626';g.lineWidth=12;g.beginPath();g.moveTo(16,Hh-16);g.lineTo(W-16,16);g.stroke()}});
@@ -2125,6 +2168,135 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&BG.on&&!B
 const _h2SoloBG=h2Solo;h2Solo=function(c,why){bgStop();_h2SoloBG(c,why);bgStart()};
 const _netLeaveBG=netLeave;netLeave=function(){bgStop();_netLeaveBG()};
 const _dmBG=drawMenu;drawMenu=function(){if(!$('menu').classList.contains('hide'))bgStop();_dmBG()};
+// ===== v25: profile photo + avatar customization + Nugini (Kopřivnice) =====
+const XCOL=['#ef4444','#f97316','#facc15','#22c55e','#14b8a6','#3b82f6','#1e3a8a','#a855f7','#ec4899','#f9a8d4','#ffffff','#9ca3af','#374151','#111827','#78350f','#d6b48a'];
+const XSKIN=['#f5c542','#fde2c8','#f1c27d','#e0ac69','#c68642','#8d5524','#5c3a21'];
+const XHAIRC=['#111111','#3b2314','#6b3f1d','#a0522d','#d6b25e','#f5deb3','#9ca3af','#ec4899','#3b82f6'];
+const XHS=[['none','Žádné'],['short','Krátké'],['long','Dlouhé'],['pony','Culík'],['curly','Kudrny'],['cap','Kšiltovka']];
+const XAC=[['none','Nic'],['glasses','Brýle 👓'],['cap','Kšiltovka 🧢'],['hat','Klobouk 🎩'],['phones','Sluchátka 🎧'],['bow','Mašle 🎀'],['band','Čelenka']];
+const XDEF={nugi:{hs:'short',hc:'#111111',so:'#111111'},lenka:{hs:'long',hc:'#2b1b12',so:'#f8fafc'},domik:{hs:'short',hc:'#111111',so:'#f8fafc'},ema:{hs:'long',hc:'#1c1208',ac:'band',ak:'#f9a8d4',so:'#f9a8d4'}};
+CH.forEach(c=>{c.n0=c.n;c.col0=c.col;c.leg0=c.leg});
+let CUSTL=LS.get('cust',{})||{},CUSTN={};
+const XFMAX=30000;
+function custClean(d){if(!d||typeof d!=='object')return null;const o={},hx=/^#[0-9a-fA-F]{6}$/;
+ if(typeof d.face==='string'&&d.face.length<=XFMAX&&/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(d.face))o.face=d.face;
+ ['sh','pa','so','hc','ak','sk'].forEach(k=>{if(typeof d[k]==='string'&&hx.test(d[k]))o[k]=d[k].toLowerCase()});
+ if(XHS.some(h=>h[0]===d.hs))o.hs=d.hs;if(XAC.some(h=>h[0]===d.ac))o.ac=d.ac;
+ if(typeof d.nk==='string'){const n=d.nk.replace(/[<>&"'`\\]/g,'').replace(/\s+/g,' ').trim().slice(0,14);if(n)o.nk=n}
+ return Object.keys(o).length?o:null}
+function myCid(){try{if(run&&S&&S.P){const p=NET.role==='client'?S.P[NET.me]:S.P[LOC[0]];if(p)return p.c.id}}catch(e){}const c=meChar();return c?c.id:null}
+function custOf(id){if(id in CUSTN&&id!==myCid())return CUSTN[id];return CUSTL[id]||null}
+function lookOf(id){return Object.assign({},XDEF[id]||{},custOf(id)||{})}
+function lookSig(id){const L=lookOf(id);return JSON.stringify([L.sh,L.pa,L.so,L.hs,L.hc,L.ac,L.ak,L.sk])}
+function circPng(src,cb){const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=160;const g=c.getContext('2d');g.beginPath();g.arc(80,80,80,0,7);g.clip();g.drawImage(im,0,0,160,160);cb(c.toDataURL('image/png'))};im.src=src}
+function custApply(id){const c=chById(id);if(!c)return;const L=lookOf(id),cu=custOf(id);
+ c.n=(cu&&cu.nk)||c.n0;c.col=L.sh||c.col0;c.leg=L.pa||c.leg0;
+ const f=cu&&cu.face,want=f||SRC('sq_'+id);
+ if(SQ[id]&&SQ[id].dataset.x!==want){SQ[id].dataset.x=want;SQ[id].onload=()=>{delete FACE[id]};SQ[id].src=want;delete FACE[id];
+  if(f)circPng(f,u=>{if(SQ[id].dataset.x===want)IMG[id].src=u});else IMG[id].src=SRC(id)}
+ if(typeof H2!=='undefined'&&H2.btn&&H2.btn[id])h2Tile(c)}
+function custSave(id,d){d=custClean(d);if(d)CUSTL[id]=d;else delete CUSTL[id];LS.set('cust',CUSTL);custApply(id);custSend(id)}
+function custSend(id){if(!run||!S)return;const d=CUSTL[id]||null;if(NET.role==='client')netSend({t:'cu',id,d});else if(NET.role==='host'){netBroadcast({t:'cu',id,d})}}
+CH.forEach(c=>{if(CUSTL[c.id])custApply(c.id)});
+// ---- network ----
+const _hmX=hostMsg;hostMsg=function(conn,m){if(m&&m.t==='cu'){const l=NET.lobby.find(q=>q.conn===conn);if(!l||l.c.id!==m.id)return;const d=custClean(m.d);CUSTN[m.id]=d;custApply(m.id);netBroadcast({t:'cu',id:m.id,d});return}
+ _hmX(conn,m);if(m&&m.t==='hello'){try{const me=myCid();const L=[];if(me)L.push([me,CUSTL[me]||null]);Object.keys(CUSTN).forEach(k=>{if(k!==me&&k!==m.c&&NET.lobby.some(q=>q.c.id===k))L.push([k,CUSTN[k]])});L.forEach(([id,d])=>conn.send({t:'cu',id,d}))}catch(e){}}};
+const _cmX=clientMsg;clientMsg=function(m){if(m&&m.t==='cu'){if(m.id!==myCid()){CUSTN[m.id]=custClean(m.d);custApply(m.id)}return}
+ _cmX(m);if(m&&m.t==='start'){setTimeout(()=>{const id=myCid();if(id)netSend({t:'cu',id,d:CUSTL[id]||null})},500)}};
+// ---- 3D avatar ----
+function xBox(w,h,d,x,y,z,col,par){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),gm(col));m.position.set(x,y,z);par.add(m);return m}
+function avCust(a,L){if(!L)return;const sk=L.sk;
+ if(sk){const s=gm(sk);a.aL.children[0].material=s;a.aR.children[0].material=s;a.hm.material=[s,s,s,s,s,s];a.sk=sk}
+ if(L.so){[a.gL,a.gR].forEach(g=>xBox(16,7,19,0,-35,2,L.so,g))}
+ const hd=a.hd,hc=L.hc||'#3b2314',hs=L.hs||'none';
+ if(hs!=='none'){xBox(32,7,32,0,31.5,0,hc,hd);xBox(32,16,4,0,22,-15,hc,hd);
+  if(hs==='long'){xBox(32,34,5,0,13,-16,hc,hd);xBox(4,22,26,-16,20,-2,hc,hd);xBox(4,22,26,16,20,-2,hc,hd)}
+  if(hs==='pony'){xBox(9,9,9,0,24,-20,hc,hd);xBox(7,22,7,0,10,-22,hc,hd)}
+  if(hs==='curly'){[[-12,-12],[12,-12],[-12,10],[12,10],[0,0]].forEach(([x,z])=>xBox(14,12,14,x,33,z,hc,hd))}
+  if(hs==='cap'){xBox(34,7,34,0,34,0,L.ak||'#2563eb',hd);xBox(30,2,14,0,31,21,L.ak||'#2563eb',hd)}}
+ const ak=L.ak||'#ec4899',ac=L.ac||'none';
+ if(ac==='glasses'){xBox(11,8,1.5,-7,17,15.8,'#111111',hd);xBox(11,8,1.5,7,17,15.8,'#111111',hd);xBox(4,2,1.5,0,18,15.8,'#111111',hd);[-7,7].forEach(x=>xBox(8,5,.8,x,17,16.4,'#93c5fd',hd))}
+ if(ac==='cap'){xBox(34,8,34,0,34,0,ak,hd);xBox(30,2,15,0,31,22,ak,hd)}
+ if(ac==='hat'){const b=new THREE.Mesh(new THREE.CylinderGeometry(26,26,2,20),gm(ak));b.position.y=31;hd.add(b);const cr=new THREE.Mesh(new THREE.CylinderGeometry(15,16,16,20),gm(ak));cr.position.y=40;hd.add(cr);xBox(33,3,33,0,33.5,0,'#111111',hd).scale.set(.95,1,.95)}
+ if(ac==='phones'){xBox(34,4,6,0,33,0,'#111111',hd);xBox(5,11,11,-17.5,16,0,ak,hd);xBox(5,11,11,17.5,16,0,ak,hd);xBox(3,16,3,-17,26,0,'#111111',hd);xBox(3,16,3,17,26,0,'#111111',hd)}
+ if(ac==='bow'){const g=new THREE.Group();g.position.set(9,32,6);hd.add(g);xBox(8,7,4,-5,0,0,ak,g).rotation.z=.4;xBox(8,7,4,5,0,0,ak,g).rotation.z=-.4;xBox(4,4,5,0,0,0,ak,g)}
+ if(ac==='band'){xBox(33,3,33,0,30,0,ak,hd)}}
+const _mkAvX=mkAv;mkAv=function(c,sc){const a=_mkAvX(c,sc);try{avCust(a,lookOf(c.id))}catch(e){}a.sig=lookSig(c.id);return a};
+avFace=function(a,id){const m=faceMat(id),sk=a.sk||SKIN;if(m&&(a.fid!==m.uuid||a.fsk!==sk)){const s=gm(sk);a.hm.material=[s,s,s,s,m,s];a.fid=m.uuid;a.fsk=sk}};
+const _avGetX=avGet;avGet=function(k,c,sc){const a=GL.av[k];if(a&&a.c===c&&a.sig!==lookSig(c.id)){GL.sc.remove(a.root);delete GL.av[k]}return _avGetX(k,c,sc)};
+// ---- start menu ----
+function h2Tile(c){const d=H2.btn[c.id];if(!d)return;const im=d.querySelector('img'),cu=custOf(c.id),src=(cu&&cu.face)||SRC('sq_'+c.id);if(im&&im.getAttribute('src')!==src)im.src=src;const b=d.querySelector('b');if(b&&b.textContent!==c.n)b.textContent=c.n}
+function h2Sec(){const g=$('hgrid');if(!g)return;const f=CH.find(c=>c.g==='k');if(f&&H2.btn[f.id]&&!g.querySelector('.h2sec')){const s=document.createElement('div');s.className='h2sec';s.innerHTML='🏙️ Kopřivnice <small>· Nuginí</small>';g.insertBefore(s,H2.btn[f.id])}}
+const _h2BX=h2Build;h2Build=function(){_h2BX();h2Sec()};
+const _h2UX=h2Upd;h2Upd=function(){if(!run&&Object.keys(CUSTN).length){CUSTN={};CH.forEach(c=>custApply(c.id))}_h2UX();h2Sec();const me=meChar();CH.forEach(c=>{const d=H2.btn[c.id];if(!d)return;h2Tile(c);let e=d.querySelector('.pcEd');if(me===c&&d.classList.contains('sel')){if(!e){e=document.createElement('span');e.className='pcEd';e.textContent='✏️';e.title='Změnit fotku a vzhled';e.onclick=ev=>{ev.stopPropagation();ev.preventDefault();profOpen(c.id)};d.appendChild(e)}}else if(e)e.remove()})};
+// ---- in-game entry (📱 menu) ----
+if(typeof wMenuR==='function'){const _wmrX=wMenuR;wMenuR=function(){_wmrX();try{const d=$('wmenu');if(d&&WM&&WM.k==='sit'&&!d.querySelector('[data-prof]')){const box=d.firstElementChild;const hdr=box&&box.firstElementChild;if(hdr)hdr.insertAdjacentHTML('afterend','<button data-prof="1" style="display:block;width:100%;margin:6px 0 8px;padding:11px;border-radius:14px;border:0;background:linear-gradient(90deg,#ec4899,#8b5cf6);color:#fff;font-weight:800;font-size:15px">👤 Můj profil – fotka a vzhled</button>')}}catch(e){}}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-prof]');if(b){e.stopPropagation();e.preventDefault();try{wClose()}catch(_){const d=$('wmenu');if(d)d.classList.add('hide')}profOpen(myCid())}},true);
+// ---- profile sheet ----
+const XP={};
+function profOpen(id){const c=chById(id);if(!c)return;XP.id=id;XP.L=Object.assign({sh:c.col0,pa:c.leg0,sk:SKIN,hs:'none',hc:'#3b2314',ac:'none',ak:'#ec4899',so:''},lookOf(id));const cu=custOf(id);XP.face=(cu&&cu.face)||null;XP.L.nk=(cu&&cu.nk)||'';
+ let o=$('xprof');if(!o){o=document.createElement('div');o.id='xprof';document.body.appendChild(o);['keydown','keyup'].forEach(t=>o.addEventListener(t,e=>e.stopPropagation()));['pointerdown','touchstart','mousedown','wheel'].forEach(t=>o.addEventListener(t,e=>e.stopPropagation(),{passive:true}))}
+ o.classList.remove('hide');profR();prevStart()}
+function sw(k,arr,cur){return '<div class="xsw">'+arr.map(v=>'<i data-xk="'+k+'" data-xv="'+v+'" class="'+(cur===v?'on':'')+'" style="background:'+v+'"></i>').join('')+'<label class="xcp" style="background:'+(cur||'#888')+'"><input type="color" data-xk="'+k+'" value="'+(cur||'#888888')+'">🎨</label></div>'}
+function chips(k,arr,cur){return '<div class="xch">'+arr.map(([v,t])=>'<b data-xk="'+k+'" data-xv="'+v+'" class="'+(cur===v?'on':'')+'">'+t+'</b>').join('')+'</div>'}
+function profR(){const o=$('xprof'),c=chById(XP.id),L=XP.L;const fs=XP.face||SRC('sq_'+XP.id);
+ o.innerHTML='<div class="xbox"><div class="xhd"><b>👤 Můj vzhled – '+c.n0+'</b><button data-xa="close">✕</button></div>'+
+ '<div class="xtop"><div class="xfacew"><img class="xface" src="'+fs+'"><div class="xfb"><label class="xbtn">🤳 Selfie<input type="file" accept="image/*" capture="user" data-xf="1"></label><label class="xbtn">🖼️ Galerie<input type="file" accept="image/*" data-xf="1"></label>'+(XP.face?'<button class="xbtn xg" data-xa="orig">↩️ Vrátit původní</button>':'')+'</div></div><canvas id="xprev" width="300" height="340"></canvas></div>'+
+ '<div class="xsec">Jmenovka<input id="xnk" maxlength="14" placeholder="'+c.n0+'" value="'+(L.nk||'').replace(/"/g,'')+'"></div>'+
+ '<div class="xsec">Tričko'+sw('sh',XCOL,L.sh)+'</div><div class="xsec">Kalhoty'+sw('pa',XCOL,L.pa)+'</div><div class="xsec">Boty'+sw('so',XCOL,L.so)+'</div>'+
+ '<div class="xsec">Vlasy'+chips('hs',XHS,L.hs)+sw('hc',XHAIRC,L.hc)+'</div><div class="xsec">Doplněk'+chips('ac',XAC,L.ac)+sw('ak',XCOL,L.ak)+'</div><div class="xsec">Pleť'+sw('sk',XSKIN,L.sk)+'</div>'+
+ '<div class="xft"><button class="xbtn xg" data-xa="def">Výchozí</button><button class="xbtn xok" data-xa="save">💾 Uložit</button></div></div><div id="xcrop" class="hide"></div>';
+ o.onclick=profClick;o.oninput=e=>{const t=e.target;if(t.id==='xnk'){XP.L.nk=t.value.slice(0,14);return}if(t.type==='color'){XP.L[t.dataset.xk]=t.value.toLowerCase();prevDirty()}};
+ o.onchange=e=>{const t=e.target;if(t.dataset.xf&&t.files&&t.files[0])cropOpen(t.files[0]);if(t.type==='color')profR2()};prevAttach()}
+function profR2(){const sc=$('xprof').querySelector('.xbox').scrollTop;profR();$('xprof').querySelector('.xbox').scrollTop=sc}
+function profClick(e){const t=e.target.closest('[data-xk],[data-xa]');if(!t)return;
+ if(t.dataset.xk&&t.dataset.xv!=null){XP.L[t.dataset.xk]=t.dataset.xv;prevDirty();profR2();return}
+ const a=t.dataset.xa;if(a==='close')profClose();
+ if(a==='orig'){XP.face=null;profR2()}
+ if(a==='def'){custSave(XP.id,null);profOpen(XP.id);xToast('Vzhled vrácen na výchozí')}
+ if(a==='save'){const L=XP.L,c=chById(XP.id),d={};if(XP.face)d.face=XP.face;if(L.nk&&L.nk.trim()&&L.nk.trim()!==c.n0)d.nk=L.nk;
+  ['sh','pa','so','hs','hc','ac','ak','sk'].forEach(k=>{if(L[k])d[k]=L[k]});if(d.sh===c.col0)delete d.sh;if(d.pa===c.leg0)delete d.pa;if(d.sk===SKIN)delete d.sk;if(d.hs==='none')delete d.hs;if(d.ac==='none')delete d.ac;
+  const df=XDEF[XP.id]||{};Object.keys(df).forEach(k=>{if(!(k in d))d[k]=df[k]});
+  custSave(XP.id,d);profClose();xToast('💾 Uloženo – '+chById(XP.id).n)}}
+function xToast(t){try{if(run&&S)chat('👤',t,'#f472b6');else{const n=$('nstat')||null;if(n)n.textContent=t}}catch(e){}}
+function profClose(){const o=$('xprof');if(o)o.classList.add('hide');prevStop();try{h2Upd()}catch(e){}}
+// crop
+function cropOpen(file){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>cropUI(im);im.src=r.result};r.readAsDataURL(file)}
+function cropUI(im){const w=$('xcrop');w.classList.remove('hide');w.innerHTML='<div class="xcbox"><b>Posuň a přibliž obličej do kruhu</b><canvas id="xcc" width="280" height="280"></canvas><input type="range" id="xcz" min="0" max="100" value="0"><div class="xft"><button class="xbtn xg" data-ca="no">Zrušit</button><button class="xbtn xok" data-ca="ok">✅ Uložit fotku</button></div></div>';
+ const cv=$('xcc'),g=cv.getContext('2d'),C={s0:240/Math.min(im.width,im.height),ox:0,oy:0};C.s=C.s0;const P=new Map();let pd=0,pm=null;
+ const draw=()=>{g.fillStyle='#222';g.fillRect(0,0,280,280);g.drawImage(im,140+C.ox-im.width*C.s/2,140+C.oy-im.height*C.s/2,im.width*C.s,im.height*C.s);g.fillStyle='rgba(0,0,0,.6)';g.beginPath();g.rect(0,0,280,280);g.moveTo(260,140);g.arc(140,140,120,0,Math.PI*2,true);g.closePath();g.fill('evenodd');g.strokeStyle='#f472b6';g.lineWidth=3;g.beginPath();g.arc(140,140,120,0,7);g.stroke()};
+ const clampS=s=>Math.max(C.s0*.6,Math.min(C.s0*6,s));const z=$('xcz');const setS=s=>{C.s=clampS(s);z.value=Math.round(Math.log(C.s/C.s0*1/0.6)/Math.log(10)*100);draw()};
+ z.oninput=()=>{C.s=clampS(C.s0*.6*Math.pow(10,z.value/100));draw()};
+ const mid=()=>{const a=[...P.values()];return a.length>1?{x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2,d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)}:{x:a[0].x,y:a[0].y,d:0}};
+ cv.style.touchAction='none';cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);P.set(e.pointerId,{x:e.clientX,y:e.clientY});pm=mid();pd=pm.d};
+ cv.onpointermove=e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:e.clientX,y:e.clientY});const m=mid(),k=280/cv.getBoundingClientRect().width;C.ox+=(m.x-pm.x)*k;C.oy+=(m.y-pm.y)*k;if(P.size>1&&pd>0)setS(C.s*m.d/pd);pm=m;pd=m.d;draw()};
+ const up=e=>{P.delete(e.pointerId);if(P.size){pm=mid();pd=pm.d}};cv.onpointerup=up;cv.onpointercancel=up;cv.onwheel=e=>{e.preventDefault();setS(C.s*(e.deltaY<0?1.1:.9))};
+ w.onclick=e=>{const b=e.target.closest('[data-ca]');if(!b)return;if(b.dataset.ca==='ok'){XP.face=cropOut(im,C)}w.classList.add('hide');w.innerHTML='';profR2();prevDirty()};
+ XP.crop=C;XP.cdraw=draw;draw()}
+function cropOut(im,C){for(const [n,q] of [[160,.82],[160,.7],[144,.65],[128,.6],[128,.45]]){const o=document.createElement('canvas');o.width=o.height=n;const g=o.getContext('2d'),k=n/240;g.fillStyle='#fff';g.fillRect(0,0,n,n);g.drawImage(im,(140+C.ox-im.width*C.s/2-20)*k,(140+C.oy-im.height*C.s/2-20)*k,im.width*C.s*k,im.height*C.s*k);const u=o.toDataURL('image/jpeg',q);if(u.length<=XFMAX-500)return u}return null}
+// preview (own mini three.js renderer)
+const XV={};
+function prevStart(){XV.on=1;XV.dirty=1;if(!XV.raf)XV.raf=requestAnimationFrame(prevLoop)}
+function prevStop(){XV.on=0;if(XV.raf)cancelAnimationFrame(XV.raf);XV.raf=0;if(XV.r){try{XV.r.dispose();XV.r.forceContextLoss()}catch(e){}XV.r=null;XV.sc=null;XV.cv=null}}
+function prevDirty(){XV.dirty=1}
+function prevAttach(){const cv=$('xprev');if(!cv)return;if(XV.r&&XV.cv!==cv){try{XV.r.dispose();XV.r.forceContextLoss()}catch(e){}XV.r=null}XV.cv=cv;XV.dirty=1;
+ if(!XV.r&&window.THREE){try{XV.r=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,preserveDrawingBuffer:true});XV.r.setPixelRatio(Math.min(2,devicePixelRatio||1));XV.r.setSize(150,170,false);
+  XV.sc=new THREE.Scene();XV.sc.add(new THREE.AmbientLight(0xffffff,.75));const dl=new THREE.DirectionalLight(0xffffff,.7);dl.position.set(60,120,120);XV.sc.add(dl);XV.cam=new THREE.PerspectiveCamera(32,150/170,1,2000);XV.cam.position.set(0,70,230);XV.cam.lookAt(0,58,0)}catch(e){XV.r=null}}}
+function prevBuild(){if(!XV.sc)return;if(XV.av)XV.sc.remove(XV.av.root);const c=chById(XP.id),L=XP.L,G=avG(),root=new THREE.Group(),sk=gm(L.sk||SKIN);
+ const hips=new THREE.Group();hips.position.y=38;root.add(hips);const gL=new THREE.Group(),gR=new THREE.Group();gL.position.x=-8.5;gR.position.x=8.5;gL.add(new THREE.Mesh(G.leg,gm(L.pa||c.leg0)));gR.add(new THREE.Mesh(G.leg,gm(L.pa||c.leg0)));hips.add(gL);hips.add(gR);
+ const tor=new THREE.Group();tor.position.y=38;root.add(tor);tor.add(new THREE.Mesh(G.torso,gm(L.sh||c.col0)));const aL=new THREE.Group(),aR=new THREE.Group();aL.position.set(-23,35,0);aR.position.set(23,35,0);aL.add(new THREE.Mesh(G.arm,sk));aR.add(new THREE.Mesh(G.arm,sk));aL.rotation.z=-.15;aR.rotation.z=.15;tor.add(aL);tor.add(aR);
+ const hd=new THREE.Group();hd.position.y=38;tor.add(hd);const hm=new THREE.Mesh(G.head,sk);hd.add(hm);const a={root,gL,gR,tor,aL,aR,hd,hm};avCust(a,Object.assign({},L,{sk:L.sk||SKIN}));
+ const im=new Image();im.onload=()=>{if(XV.av!==a)return;const fm=new THREE.MeshLambertMaterial({map:gtex(128,128,(g,w,h)=>{g.fillStyle=L.sk||SKIN;g.fillRect(0,0,w,h);g.drawImage(im,2,2,w-4,h-4)})});const s=gm(L.sk||SKIN);hm.material=[s,s,s,s,fm,s]};im.src=XP.face||SRC('sq_'+XP.id);
+ XV.sc.add(root);XV.av=a}
+function prevLoop(t){XV.raf=0;if(!XV.on)return;if(XV.r&&XV.sc){if(XV.dirty){XV.dirty=0;prevBuild()}if(XV.av)XV.av.root.rotation.y=XV.fix!=null?XV.fix:t/1400;try{XV.r.render(XV.sc,XV.cam)}catch(e){}}
+ else if(XV.cv){const g=XV.cv.getContext('2d'),L=XP.L;g.clearRect(0,0,300,340);g.fillStyle=L.sh;g.fillRect(105,130,90,90);g.fillStyle=L.pa;g.fillRect(110,220,80,90);const im=SQ[XP.id];if(imOK(im))g.drawImage(im,110,40,80,80)}
+ XV.raf=requestAnimationFrame(prevLoop)}
+// ---- Nugini spawn at their flat (Kopřivnice panelák) ----
+const NUGDOOR={x:4820,y:2630};
+const _wUpdX=wUpd;wUpd=function(dt){S.P.forEach(p=>{if(!p.spw){p.spw=1;if(NUGK.includes(p.c.id)){p.x=NUGDOOR.x+((p.i%3)-1)*40;p.y=NUGDOOR.y;p.wi=0;p.lx=p.ly=null;if(p.tx!=null){p.tx=p.x;p.ty=p.y}}}});_wUpdX(dt)};
+const _scX=startClient;startClient=function(){D3.nspw=0;_scX()};
+const _cfX=clientFrame;clientFrame=function(dt){_cfX(dt);const me=S&&S.d3&&S.P[NET.me];if(me&&D3.pp&&!D3.nspw){D3.nspw=1;if(NUGK.includes(me.c.id)){D3.pp.x=NUGDOOR.x+((me.i%3)-1)*40;D3.pp.y=NUGDOOR.y;D3.pp.lx=null}}};
+if(typeof placeName==='function'){const _pnX=placeName;placeName=function(p){if(p&&p.x>4100&&p.x<6600&&p.y>2300&&p.y<3300)return '🏙️ Kopřivnice · u Nuginí';return _pnX(p)}}
 drawMenu();
 /*SW*/if(location.protocol.startsWith('http')&&'serviceWorker'in navigator){const hadC=!!navigator.serviceWorker.controller;let rl=0;
  const doReload=()=>{if(rl)return;rl=1;location.reload()};
