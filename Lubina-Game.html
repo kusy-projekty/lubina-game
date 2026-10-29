@@ -249,7 +249,7 @@ const CH=[
  {id:'kristof',n:'Kristof',r:'kamarád',col:'#1e3a8a',leg:'#7f1d1d'},
  {id:'martin',n:'Děda Martin',r:'děda',col:'#60a5fa',leg:'#1e293b'},
  {id:'anicka',n:'Anička',r:'',col:'#14b8a6',leg:'#312e81'},
- {id:'nugi',n:'Nugi (Lukáš)',r:'Kopřivnice',col:'#1f2937',leg:'#111827',g:'k'},
+ {id:'nugi',n:'Nugy (Lukáš)',r:'Kopřivnice',col:'#1f2937',leg:'#111827',g:'k'},
  {id:'lenka',n:'Lenka',r:'Kopřivnice',col:'#f9a8d4',leg:'#1e293b',g:'k'},
  {id:'domik',n:'Domíšek',r:'Kopřivnice',col:'#f8fafc',leg:'#3b5b9a',g:'k'},
  {id:'ema',n:'Emíčka',r:'Kopřivnice',col:'#a78bfa',leg:'#a78bfa',g:'k'}];
@@ -1223,7 +1223,7 @@ function bikeStart(){let R=[],gi=-1;const v0=S.visI||0;for(let k=0;k<VGRP.length
  const nug=gi===1,jog=nug&&Math.random()<.45,pz=jog?'jog':'bike';
  R.forEach((n,i)=>{n.x=FD.x+i*30;n.y=FD.y;n.pose=pz;n.tx=null;n.stk=0});S.bike={ph:'arrive',t:0,bk:[],riders:R.map(n=>n.c.id),rode:{},jT:3,bT:6,nug,jog};
  [0,180,600,780].forEach(t=>setTimeout(()=>snd(1900,.09,'triangle',.09),t));const nm=R.map(n=>n.c.n).join(', ');
- if(nug){banner(jog?'🏃 Nuginí přiběhli z Kopřivnice!':'🚲 Nuginí přijeli z Kopřivnice!','Pohlídají Arianku • berou děcka ven a na Mekáč 🍔');say((jog?'🏃 Přiběhli joggingem':'🚲 Přijeli na kolech')+' z Kopřivnice: '+nm+'!')}
+ if(nug){banner(jog?'🏃 Nugyovi přiběhli z Kopřivnice!':'🚲 Nugyovi přijeli z Kopřivnice!','Pohlídají Arianku • berou děcka ven a na Mekáč 🍔');say((jog?'🏃 Přiběhli joggingem':'🚲 Přijeli na kolech')+' z Kopřivnice: '+nm+'!')}
  else{banner('🚲 Cink cink! '+(R.length>1?'Přijeli':'Přijel(a)')+' na kolech!','Chtějí děcka ven • najdi helmy ⛑️');say('🔔 Cink cink! 🚲 '+nm+' '+(R.length>1?'přijeli':'přijel(a)')+' na kolech a volají děcka ven!')}
  R.forEach(n=>{n.bub=nug?R1(LINES[n.c.id]):'Cink cink! 🔔';n.bubT=2.4});return true}
 function riders(){return S.bike?S.N.filter(n=>S.bike.riders.includes(n.c.id)&&n.pose!=='away'):[]}
@@ -1242,7 +1242,7 @@ function bikeUpd(dt){if(S.bikeCd==null)S.bikeCd=70+Math.random()*20;const B=S.bi
   if(B.t<=0){B.ph='leave';B.bk=[];R.forEach(n=>{n.pose=B.jog?'jog':'bike';n.stk=0});S.helm=[];say('🚲 Vyrážíme! Pá pá! 👋')}return}
  if(B.ph==='leave'){let all=1;R.forEach(n=>{if(moveTo(n,FD.x,FD.y,110,dt)>30&&n.stk<3)all=0});
   if(all||!R.length){R.forEach(n=>{n.pose='away';n.x=NPCPOS[n.c.id].x;n.y=NPCPOS[n.c.id].y});F.forEach(n=>{n.pose='away';n.bubT=0});B.ph='gone';B.t=25+Math.random()*10;
-   say(B.nug?'🍔 Nuginí vzali '+(F.length?'děcka ('+F.map(n=>n.c.n).join(', ')+')':'Domíška a Emíčku')+' do Mekáče a pak domů do Kopřivnice.':F.length?'🚲 Odjeli s děckama na výlet ('+F.map(n=>n.c.n).join(', ')+'). Doma je chvilku klid… 😌':'🚲 Odjeli na výlet. Pá pá!')}return}
+   say(B.nug?'🍔 Nugyovi vzali '+(F.length?'děcka ('+F.map(n=>n.c.n).join(', ')+')':'Domíška a Emíčku')+' do Mekáče a pak domů do Kopřivnice.':F.length?'🚲 Odjeli s děckama na výlet ('+F.map(n=>n.c.n).join(', ')+'). Doma je chvilku klid… 😌':'🚲 Odjeli na výlet. Pá pá!')}return}
  if(B.ph==='gone'){B.t-=dt;if(B.t<=0){const K=S.N.filter(n=>n.fol);K.forEach(n=>{n.x=FD.x;n.y=FD.y;n.home=1;n.ht=0;n.hx=n.hx2;n.hy=n.hy2;n.wp=n.wp2;n.pose='walk2';n.fol=null;n.bub='To byla jízda! 😄';n.bubT=2.4});
   if(K.length)say('🚲 Děcka se vrátila z kola! To byla jízda! 😄');S.bike=null;S.bikeCd=120+Math.random()*40}}}
 // ---------- host update hook ----------
@@ -2024,7 +2024,7 @@ function nugPanel(sc){const x=4500,y=2680,w=640,d=280,H=560;
  bx('steel',x-6,y-6,w+12,d+12,H,8);
  for(let f=1;f<5;f++)for(let i=0;i<3;i++){const bx0=x+60+i*210;const b=new THREE.Mesh(new THREE.BoxGeometry(110,8,34),pl);b.position.set(bx0+55,f*112,y-17);sc.add(b);const r=new THREE.Mesh(new THREE.BoxGeometry(110,34,3),gm(f===2&&i===1?'#ec4899':'#94a3b8'));r.position.set(bx0+55,f*112+21,y-33);sc.add(r)}
  const dr=new THREE.Mesh(new THREE.BoxGeometry(90,120,4),gm('#7c2d12'));dr.position.set(4820,60,y-2);sc.add(dr);const st=new THREE.Mesh(new THREE.BoxGeometry(170,10,60),gm('#9ca3af'));st.position.set(4820,5,y-30);sc.add(st);
- const sg=wSign('🏠 Nuginí · 3. patro','#1d4ed8','#fff',300,60);sg.position.set(4820,160,y-5);sg.rotation.y=Math.PI;sc.add(sg);
+ const sg=wSign('🏠 Nugy · 3. patro','#1d4ed8','#fff',300,60);sg.position.set(4820,160,y-5);sg.rotation.y=Math.PI;sc.add(sg);
  const pk=wSign('Kopřivnice','#fff','#111',240,80,1);pk.position.set(4250,150,2378);pk.rotation.y=-Math.PI/2;sc.add(pk);const pk2=wSign('Kopřivnice','#fff','#111',240,80,2);pk2.position.set(4249,150,2378);pk2.rotation.y=Math.PI/2;sc.add(pk2);bx('steel',4246,2376,6,4,0,150);
  const dk=wSign('🚲 Kopřivnice 8 km →','#fde047','#111',280,70);dk.position.set(2700,140,2552);dk.rotation.y=Math.PI;sc.add(dk);bx('steel',2698,2554,4,4,0,180);
  const dk2=wSign('🏃 Kopřivnice →','#fde047','#111',240,64);dk2.position.set(1500,140,2374);sc.add(dk2);bx('steel',1498,2372,4,4,0,180)}
@@ -2187,7 +2187,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&BG.on&&!B
 const _h2SoloBG=h2Solo;h2Solo=function(c,why){bgStop();_h2SoloBG(c,why);bgStart()};
 const _netLeaveBG=netLeave;netLeave=function(){bgStop();_netLeaveBG()};
 const _dmBG=drawMenu;drawMenu=function(){if(!$('menu').classList.contains('hide'))bgStop();_dmBG()};
-// ===== v25: profile photo + avatar customization + Nugini (Kopřivnice) =====
+// ===== v25: profile photo + avatar customization + Nugyni (Kopřivnice) =====
 const XCOL=['#ef4444','#f97316','#facc15','#22c55e','#14b8a6','#3b82f6','#1e3a8a','#a855f7','#ec4899','#f9a8d4','#ffffff','#9ca3af','#374151','#111827','#78350f','#d6b48a'];
 const XSKIN=['#f5c542','#fde2c8','#f1c27d','#e0ac69','#c68642','#8d5524','#5c3a21'];
 const XHAIRC=['#111111','#3b2314','#6b3f1d','#a0522d','#d6b25e','#f5deb3','#9ca3af','#ec4899','#3b82f6'];
@@ -2245,7 +2245,7 @@ avFace=function(a,id){const m=faceMat(id),sk=a.sk||SKIN;if(m&&(a.fid!==m.uuid||a
 const _avGetX=avGet;avGet=function(k,c,sc){const a=GL.av[k];if(a&&a.c===c&&a.sig!==lookSig(c.id)){GL.sc.remove(a.root);delete GL.av[k]}return _avGetX(k,c,sc)};
 // ---- start menu ----
 function h2Tile(c){const d=H2.btn[c.id];if(!d)return;const im=d.querySelector('img'),cu=custOf(c.id),src=(cu&&cu.face)||SRC('sq_'+c.id);if(im&&im.getAttribute('src')!==src)im.src=src;const b=d.querySelector('b');if(b&&b.textContent!==c.n)b.textContent=c.n}
-function h2Sec(){const g=$('hgrid');if(!g)return;const f=CH.find(c=>c.g==='k');if(f&&H2.btn[f.id]&&!g.querySelector('.h2sec')){const s=document.createElement('div');s.className='h2sec';s.innerHTML='🏙️ Kopřivnice <small>· Nuginí</small>';g.insertBefore(s,H2.btn[f.id])}}
+function h2Sec(){const g=$('hgrid');if(!g)return;const f=CH.find(c=>c.g==='k');if(f&&H2.btn[f.id]&&!g.querySelector('.h2sec')){const s=document.createElement('div');s.className='h2sec';s.innerHTML='🏙️ Kopřivnice <small>· rodina Nugy</small>';g.insertBefore(s,H2.btn[f.id])}}
 const _h2BX=h2Build;h2Build=function(){_h2BX();h2Sec()};
 const _h2UX=h2Upd;h2Upd=function(){if(!run&&Object.keys(CUSTN).length){CUSTN={};CH.forEach(c=>custApply(c.id))}_h2UX();h2Sec();const me=meChar();CH.forEach(c=>{const d=H2.btn[c.id];if(!d)return;h2Tile(c);let e=d.querySelector('.pcEd');if(me===c&&d.classList.contains('sel')){if(!e){e=document.createElement('span');e.className='pcEd';e.textContent='✏️';e.title='Změnit fotku a vzhled';e.onclick=ev=>{ev.stopPropagation();ev.preventDefault();profOpen(c.id)};d.appendChild(e)}}else if(e)e.remove()})};
 // ---- in-game entry (📱 menu) ----
@@ -2310,13 +2310,13 @@ function prevBuild(){if(!XV.sc)return;if(XV.av)XV.sc.remove(XV.av.root);const c=
 function prevLoop(t){XV.raf=0;if(!XV.on)return;if(XV.r&&XV.sc){if(XV.dirty){XV.dirty=0;prevBuild()}if(XV.av)XV.av.root.rotation.y=XV.fix!=null?XV.fix:t/1400;try{XV.r.render(XV.sc,XV.cam)}catch(e){}}
  else if(XV.cv){const g=XV.cv.getContext('2d'),L=XP.L;g.clearRect(0,0,300,340);g.fillStyle=L.sh;g.fillRect(105,130,90,90);g.fillStyle=L.pa;g.fillRect(110,220,80,90);const im=SQ[XP.id];if(imOK(im))g.drawImage(im,110,40,80,80)}
  XV.raf=requestAnimationFrame(prevLoop)}
-// ---- Nugini spawn at their flat (Kopřivnice panelák) ----
+// ---- Nugyni spawn at their flat (Kopřivnice panelák) ----
 const NUGDOOR={x:4820,y:2630};
 function spawnOf(id){return NUGK.includes(id)?NUGDOOR:(id==='kristof'||id==='karin')?MADOOR:null}
 const _wUpdX=wUpd;wUpd=function(dt){S.P.forEach(p=>{if(!p.spw){p.spw=1;const sp=spawnOf(p.c.id);if(sp){p.x=sp.x+((p.i%3)-1)*40;p.y=sp.y;p.wi=0;p.lx=p.ly=null;if(p.tx!=null){p.tx=p.x;p.ty=p.y}}}});_wUpdX(dt)};
 const _scX=startClient;startClient=function(){D3.nspw=0;_scX()};
 const _cfX=clientFrame;clientFrame=function(dt){_cfX(dt);const me=S&&S.d3&&S.P[NET.me];if(me&&D3.pp&&!D3.nspw){D3.nspw=1;const sp=spawnOf(me.c.id);if(sp){D3.pp.x=sp.x+((me.i%3)-1)*40;D3.pp.y=sp.y;D3.pp.lx=null}}};
-if(typeof placeName==='function'){const _pnX=placeName;placeName=function(p){if(p&&p.x>4100&&p.x<6600&&p.y>2300&&p.y<3300)return '🏙️ Kopřivnice · u Nuginí';return _pnX(p)}}
+if(typeof placeName==='function'){const _pnX=placeName;placeName=function(p){if(p&&p.x>4100&&p.x<6600&&p.y>2300&&p.y<3300)return '🏙️ Kopřivnice · u Nugyových';return _pnX(p)}}
 // ===== v26: Martin house (Lubina 147), cycle path along the creek, phone chat =====
 // Martin/Anička/Kristof/Karin – Lubina 147 (real: ~400 m SSW of Lubina 85; game scale compressed). Gable faces street, white roughcast, stone plinth, red-brown roof.
 const MAH={x:-1250,y:2850,w:400,d:380,h:185,fac:'facMA',roof:'roofR',ay:1,yard:{x0:-1690,x1:-1270},fenceY:2575,
