@@ -2829,6 +2829,75 @@ const _avP3=avPose;avPose=function(a,P,X,Y,zj,dt,head){const r=_avP3(a,P,X,Y,zj,
  [-12,-4,4,12].forEach((x,i)=>B(a.hd,9,46,6,x,-6+(i%2)*3,-17,i%2?hm2:hm));B(a.hd,7,34,8,-17,-2,-6,hm2);B(a.hd,7,34,8,17,-2,-6,hm2);
  [a.gL,a.gR].forEach(g=>B(g,17,7,21,0,-36,2,pk));const sl=gm('#cbd5e1');[a.aL,a.aR].forEach(g=>{if(g.children[0])g.children[0].material=sl})}}catch(e){}return r};
 const _po3=poseOf;poseOf=function(o,isP){const P=_po3(o,isP);try{if(isP&&o&&P&&zIn(DROOM,o,10)){if(o.zbd||o.zsl){P.lie=1;P.sit=0;P.zbed=1;P.face=Math.PI/2}else if(o.zs){P.zcr=1;P.fwd=1;P.pr.push(['🤫',0,92,0,22])}}}catch(e){}return P};
+// ================= v30 · Dendův VW Golf Mk7 (tuning) =================
+function zG7tex(w,h,f){return gtex(w,h,f)}
+function zG7env(){if(ZG.env)return ZG.env;const F=k=>{const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');if(k===2){g.fillStyle='#f8fbff';g.fillRect(0,0,64,64)}else if(k===3){g.fillStyle='#3f4650';g.fillRect(0,0,64,64)}else{const gr=g.createLinearGradient(0,0,0,64);gr.addColorStop(0,'#cfe6ff');gr.addColorStop(.48,'#9cc4ef');gr.addColorStop(.52,'#6b7a5a');gr.addColorStop(1,'#3b4036');g.fillStyle=gr;g.fillRect(0,0,64,64);g.fillStyle='rgba(255,255,255,.9)';g.fillRect(8+k*6,6,18,8)}return c};
+ const t=new THREE.CubeTexture([0,1,2,3,4,5].map(F));t.needsUpdate=true;if('colorSpace'in t)t.colorSpace=THREE.SRGBColorSpace;ZG.env=t;return t}
+function zGolf7(){const G=new THREE.Group(),env=zG7env(),S_=(o)=>new THREE.MeshStandardMaterial(Object.assign({envMap:env,envMapIntensity:.8},o));
+ const paint=new THREE.MeshPhysicalMaterial({color:'#2a5cc4',metalness:.55,roughness:.3,clearcoat:1,clearcoatRoughness:.06,envMap:env,envMapIntensity:1.1}),
+  glass=S_({color:'#0a0f1a',metalness:.6,roughness:.12}),blk=S_({color:'#0b0b0d',roughness:.6}),gloss=S_({color:'#111114',metalness:.3,roughness:.25}),
+  chrome=S_({color:'#e5e7eb',metalness:1,roughness:.18,emissive:'#4b5563',emissiveIntensity:.4}),tyre=S_({color:'#141414',roughness:.9}),rim=S_({color:'#2b2f36',metalness:.8,roughness:.3});
+ const tp=g=>{const p=g.attributes.position;for(let i=0;i<p.count;i++){const y=p.getY(i);if(y>57)p.setX(i,p.getX(i)*(1-Math.min(1,(y-57)/28)*.2))}p.needsUpdate=true;g.computeVertexNormals()};
+ const ext=(pts,depth,mat,bev,xo)=>{const s=new THREE.Shape();pts.forEach((p,i)=>i?s.lineTo(p[0],p[1]):s.moveTo(p[0],p[1]));const g=new THREE.ExtrudeGeometry(s,{depth,bevelEnabled:!!bev,bevelThickness:bev||0,bevelSize:bev||0,bevelSegments:2,curveSegments:10});g.translate(0,0,-depth/2);g.rotateY(-Math.PI/2);if(xo)g.translate(xo,0,0);tp(g);const m=new THREE.Mesh(g,mat);G.add(m);return m};
+ // spodní karoserie s podběhy (u = délka, +u = předek)
+ {const s=new THREE.Shape();s.moveTo(-100,14);s.lineTo(-102,30);s.lineTo(-101,44);s.lineTo(-96,44);s.lineTo(64,44);s.lineTo(97,40);s.lineTo(101,32);s.lineTo(100,19);s.lineTo(95,12);s.lineTo(83,12);s.absarc(62,14,21,0,Math.PI,false);s.lineTo(-41,14);s.absarc(-62,14,21,0,Math.PI,false);s.lineTo(-100,14);
+  const g=new THREE.ExtrudeGeometry(s,{depth:84,bevelEnabled:true,bevelThickness:4,bevelSize:3,bevelSegments:2,curveSegments:12});g.translate(0,0,-42);g.rotateY(-Math.PI/2);G.add(new THREE.Mesh(g,paint))}
+ // horní část nad ostrou linkou ramen (tornado line) – mírně užší
+ ext([[-99,44],[-97,56],[-92,58],[60,57],[94,45.5],[97,43],[64,44]],80,paint,3);
+ // prosklení (kabina) – tmavá skla
+ ext([[-91,58],[-85,78],[-72,83],[4,84],[24,80],[56,58.5]],70,glass,3);
+ // střecha v barvě
+ ext([[-82,80.5],[-71,85.6],[4,86.6],[22,82.5],[18,81],[4,84.8],[-70,83.8]],74,paint,2);
+ // široký C-sloupek (obě strany)
+ [-1,1].forEach(sx=>{ext([[-92,57.5],[-86,80],[-70,84],[-56,83.6],[-44,58]],4,paint,1,sx*37.5);
+  ext([[-8,58],[-6,83],[0,83.5],[-1,58]],3,gloss,0,sx*37.2);
+  // zrcátko (černé krytky = tuning)
+  const mr=new THREE.Mesh(new THREE.BoxGeometry(12,9,11),gloss);mr.position.set(sx*47,61,46);G.add(mr);const ms=new THREE.Mesh(new THREE.BoxGeometry(5,3,6),blk);ms.position.set(sx*43,59,52);G.add(ms);
+  // kliky
+  [22,-30].forEach(u=>{const h=new THREE.Mesh(new THREE.BoxGeometry(2,2.5,10),chrome);h.position.set(sx*46.8,51,u);G.add(h)});
+  // ostrá linka – odlesk
+  const ln=new THREE.Mesh(new THREE.BoxGeometry(.6,.8,186),S_({color:'#5b8be0',metalness:.6,roughness:.2}));ln.position.set(sx*45.2,44.4,-2);G.add(ln);
+  // prahy
+  const sk=new THREE.Mesh(new THREE.BoxGeometry(3,5,80),gloss);sk.position.set(sx*45,14,0);G.add(sk)});
+ // ---- předek ----
+ const fr=new THREE.Mesh(new THREE.PlaneGeometry(92,26),new THREE.MeshBasicMaterial({map:zG7tex(368,104,(g,W,H)=>{g.clearRect(0,0,W,H);
+   // světlomety s LED denním svícením
+   [0,1].forEach(k=>{g.save();if(k){g.translate(W,0);g.scale(-1,1)}g.fillStyle='#1f2937';g.beginPath();g.moveTo(8,40);g.lineTo(112,30);g.lineTo(118,52);g.lineTo(30,70);g.lineTo(6,58);g.closePath();g.fill();
+    g.fillStyle='#cbd5e1';g.beginPath();g.moveTo(16,44);g.lineTo(106,35);g.lineTo(110,48);g.lineTo(30,62);g.lineTo(14,54);g.closePath();g.fill();g.fillStyle='#f8fafc';g.beginPath();g.arc(48,51,9,0,7);g.arc(80,46,7,0,7);g.fill();
+    g.strokeStyle='#e0f2fe';g.lineWidth=4;g.beginPath();g.moveTo(20,60);g.lineTo(34,64);g.lineTo(110,49);g.stroke();g.restore()});
+   // úzká maska s chromovou lištou a znakem
+   g.fillStyle='#0b0b0d';g.fillRect(118,34,132,22);g.fillStyle='#e5e7eb';g.fillRect(112,30,144,4);g.fillStyle='#1f2937';for(let i=0;i<4;i++)g.fillRect(122,38+i*4.5,124,1.4);
+   g.fillStyle='#0b0b0d';g.beginPath();g.arc(W/2,46,17,0,7);g.fill();g.strokeStyle='#f1f5f9';g.lineWidth=3.5;g.beginPath();g.arc(W/2,46,15,0,7);g.stroke();
+   g.lineWidth=3;g.beginPath();g.moveTo(W/2-10,36);g.lineTo(W/2-4,52);g.lineTo(W/2,42);g.lineTo(W/2+4,52);g.lineTo(W/2+10,36);g.stroke();g.beginPath();g.moveTo(W/2-6,36);g.lineTo(W/2,48);g.lineTo(W/2+6,36);g.stroke()}),transparent:true}));
+ fr.position.set(0,37,104.8);fr.rotation.x=-.25;G.add(fr);
+ const lo=new THREE.Mesh(new THREE.PlaneGeometry(94,22),new THREE.MeshBasicMaterial({map:zG7tex(376,88,(g,W,H)=>{g.clearRect(0,0,W,H);g.fillStyle='#0b0b0d';g.beginPath();g.moveTo(90,20);g.lineTo(W-90,20);g.lineTo(W-70,70);g.lineTo(70,70);g.closePath();g.fill();g.fillStyle='#1f2937';for(let i=0;i<5;i++)g.fillRect(84+i*0,28+i*9,W-168,3);
+   [40,W-40].forEach(x=>{g.fillStyle='#0b0b0d';g.beginPath();g.moveTo(x-28,40);g.lineTo(x+28,34);g.lineTo(x+24,66);g.lineTo(x-24,66);g.closePath();g.fill();g.fillStyle='#fef9c3';g.beginPath();g.arc(x,52,8,0,7);g.fill()});
+   g.fillStyle='#fff';g.fillRect(W/2-52,2,104,20);g.fillStyle='#1d4ed8';g.fillRect(W/2-52,2,13,20);g.fillStyle='#facc15';g.font='bold 7px sans-serif';g.fillText('CZ',W/2-50,19);g.fillStyle='#111';g.font='bold 15px sans-serif';g.textAlign='center';g.fillText('8T1 4141',W/2+6,18)}),transparent:true}));
+ lo.position.set(0,19,105.2);G.add(lo);
+ // ---- záď: L-světla, znak, SPZ, nárazník ----
+ const rr=new THREE.Mesh(new THREE.PlaneGeometry(96,30),new THREE.MeshBasicMaterial({map:zG7tex(384,120,(g,W,H)=>{g.clearRect(0,0,W,H);
+   [0,1].forEach(k=>{g.save();if(k){g.translate(W,0);g.scale(-1,1)}g.fillStyle='#7f1d1d';g.beginPath();g.moveTo(4,22);g.lineTo(96,22);g.lineTo(96,42);g.lineTo(34,42);g.lineTo(30,70);g.lineTo(6,70);g.closePath();g.fill();
+    g.strokeStyle='#ef4444';g.lineWidth=5;g.beginPath();g.moveTo(90,32);g.lineTo(24,32);g.lineTo(18,64);g.stroke();g.fillStyle='#fecaca';g.fillRect(40,26,10,6);g.restore()});
+   g.fillStyle='#0b0b0d';g.beginPath();g.arc(W/2,34,15,0,7);g.fill();g.strokeStyle='#f1f5f9';g.lineWidth=3;g.beginPath();g.arc(W/2,34,13,0,7);g.stroke();g.lineWidth=2.6;g.beginPath();g.moveTo(W/2-9,25);g.lineTo(W/2-4,40);g.lineTo(W/2,31);g.lineTo(W/2+4,40);g.lineTo(W/2+9,25);g.stroke();
+   g.fillStyle='#fff';g.fillRect(W/2-54,74,108,22);g.fillStyle='#1d4ed8';g.fillRect(W/2-54,74,13,22);g.fillStyle='#facc15';g.font='bold 7px sans-serif';g.fillText('CZ',W/2-52,93);g.fillStyle='#111';g.font='bold 16px sans-serif';g.textAlign='center';g.fillText('8T1 4141',W/2+6,92);
+   g.fillStyle='#e5e7eb';g.font='bold 9px sans-serif';g.fillText('GOLF',W-60,60)}),transparent:true}));
+ rr.position.set(0,38,-104.6);rr.rotation.y=Math.PI;G.add(rr);
+ const rd=new THREE.Mesh(new THREE.BoxGeometry(70,6,3),gloss);rd.position.set(0,16,-104);G.add(rd);[-1,1].forEach(s=>{const ex=new THREE.Mesh(new THREE.CylinderGeometry(3,3,6,10),chrome);ex.rotation.x=Math.PI/2;ex.position.set(s*24,14,-104);G.add(ex)});
+ // spoiler nad pátými dveřmi
+ const sp=new THREE.Mesh(new THREE.BoxGeometry(70,3,12),gloss);sp.position.set(0,84,-76);sp.rotation.x=.25;G.add(sp);
+ // ---- kola: pneu + 5paprskové tmavé alu ----
+ const tg=new THREE.CylinderGeometry(17,17,13,22),rg=new THREE.CylinderGeometry(12,12,13.6,20),hg=new THREE.CylinderGeometry(3,3,14.2,10),spg=new THREE.BoxGeometry(2.4,11,3.8);
+ G.userData.wh=[];[[-1,62],[1,62],[-1,-62],[1,-62]].forEach(([sx,u])=>{const w=new THREE.Group();w.position.set(sx*41,17,u);const t=new THREE.Mesh(tg,tyre);t.rotation.z=Math.PI/2;w.add(t);const r=new THREE.Mesh(rg,rim);r.rotation.z=Math.PI/2;w.add(r);const hb=new THREE.Mesh(hg,chrome);hb.rotation.z=Math.PI/2;hb.position.x=sx*.8;w.add(hb);
+  const sp=new THREE.Group(),smat=S_({color:'#9ca3af',metalness:.9,roughness:.25});for(let i=0;i<5;i++){const q=new THREE.Group();q.rotation.x=i*Math.PI*2/5;const s=new THREE.Mesh(spg,smat);s.position.set(sx*7.3,5.8,0);q.add(s);sp.add(q)}w.add(sp);w.userData.sp=sp;G.add(w);G.userData.wh.push(w)});
+ // brzdy (červené třmeny)
+ G.userData.wh.forEach(w=>{const c=new THREE.Mesh(new THREE.BoxGeometry(3,7,6),S_({color:'#dc2626'}));c.position.set(Math.sign(w.position.x)*-3,4,-4);w.add(c)});
+ // stín
+ const sh=new THREE.Mesh(new THREE.PlaneGeometry(100,210),new THREE.MeshBasicMaterial({color:'#000',transparent:true,opacity:.28,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.y=.6;G.add(sh);
+ return G}
+const _zW3=zWorld;zWorld=function(sc){_zW3(sc);try{const old=ZG.golf,lbl=old&&old.userData.lbl,G=zGolf7();if(old)(old.parent||sc).remove(old);if(lbl){G.add(lbl);lbl.position.set(0,126,0);G.userData.lbl=lbl}G.position.copy(old.position);G.rotation.copy(old.rotation);sc.add(G);ZG.golf=G}catch(e){console.error('golf7',e)}};
+// kola se točí při jízdě
+const _gs3=glScene;glScene=function(me,dt){const OV=_gs3(me,dt);try{const G=ZG.golf,v=Z.v.golf;if(G&&G.userData.wh&&(v.pt||v.mv)){G.userData.wh.forEach(w=>{w.rotation.x+=dt*14})}}catch(e){}return OV};
+const _avP4=avPose;avPose=function(a,P,X,Y,zj,dt,head){const r=_avP4(a,P,X,Y,zj,dt,head);try{if(window.HIDEME&&a.c&&a.c.id===myCid()&&a.root)a.root.visible=false}catch(e){}return r};
 drawMenu();
 /*SW*/if(location.protocol.startsWith('http')&&'serviceWorker'in navigator){const hadC=!!navigator.serviceWorker.controller;let rl=0;
  const doReload=()=>{if(rl)return;rl=1;location.reload()};
