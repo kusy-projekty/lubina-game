@@ -2004,12 +2004,12 @@ function homeOut(MT,sc){wMats(MT);
  nugPanel(sc);yHome(sc);if(typeof zWorld==='function')try{zWorld(sc)}catch(e){console.error('zWorld',e)}
  wWorld(MT,sc)}
 function nugPanel(sc){const x=4500,y=2680,w=640,d=280,H=560;
- const ft=gtex(256,224,(g,W,Hh)=>{g.fillStyle='#e7e2d6';g.fillRect(0,0,W,Hh);for(let f=0;f<5;f++){g.fillStyle=['#f4a261','#a8dadc','#e9c46a','#90be6d','#f4a261'][f];g.fillRect(0,f*44+40,W,4);for(let i=0;i<6;i++){g.fillStyle=(f===1&&i===3)?'#fde68a':'#3d5a80';g.fillRect(10+i*41,f*44+8,26,26)}}});
+ const ft=gtex(256,224,(g,W,Hh)=>{g.fillStyle='#e7e2d6';g.fillRect(0,0,W,Hh);for(let f=0;f<5;f++){g.fillStyle=['#f4a261','#a8dadc','#e9c46a','#90be6d','#f4a261'][f];g.fillRect(0,f*44+40,W,4);for(let i=0;i<6;i++){g.fillStyle=(f===3&&i===3)?'#fde68a':'#3d5a80';g.fillRect(10+i*41,f*44+8,26,26)}}});
  const fm=new THREE.MeshLambertMaterial({map:ft}),pl=gm('#d6d3cb');const m=new THREE.Mesh(new THREE.BoxGeometry(w,H,d),[pl,pl,gm('#9ca3af'),pl,fm,fm]);m.position.set(x+w/2,H/2,y+d/2);sc.add(m);
  bx('steel',x-6,y-6,w+12,d+12,H,8);
- for(let f=1;f<5;f++)for(let i=0;i<3;i++){const bx0=x+60+i*210;const b=new THREE.Mesh(new THREE.BoxGeometry(110,8,34),pl);b.position.set(bx0+55,f*112,y-17);sc.add(b);const r=new THREE.Mesh(new THREE.BoxGeometry(110,34,3),gm(f===2&&i===1?'#ec4899':'#94a3b8'));r.position.set(bx0+55,f*112+21,y-33);sc.add(r)}
+ for(let f=1;f<5;f++)for(let i=0;i<3;i++){const bx0=x+60+i*210;const b=new THREE.Mesh(new THREE.BoxGeometry(110,8,34),pl);b.position.set(bx0+55,f*112,y-17);sc.add(b);const r=new THREE.Mesh(new THREE.BoxGeometry(110,34,3),gm(f===1&&i===1?'#ec4899':'#94a3b8'));r.position.set(bx0+55,f*112+21,y-33);sc.add(r)}
  const dr=new THREE.Mesh(new THREE.BoxGeometry(90,120,4),gm('#7c2d12'));dr.position.set(4820,60,y-2);sc.add(dr);const st=new THREE.Mesh(new THREE.BoxGeometry(170,10,60),gm('#9ca3af'));st.position.set(4820,5,y-30);sc.add(st);
- const sg=wSign('🏠 Nugy · 3. patro','#1d4ed8','#fff',300,60);sg.position.set(4820,160,y-5);sg.rotation.y=Math.PI;sc.add(sg);
+ const sg=wSign('🏠 Nugy · 1. patro','#1d4ed8','#fff',300,60);sg.position.set(4820,160,y-5);sg.rotation.y=Math.PI;sc.add(sg);
  const pk=wSign('Kopřivnice','#fff','#111',240,80,1);pk.position.set(4250,150,2378);pk.rotation.y=-Math.PI/2;sc.add(pk);const pk2=wSign('Kopřivnice','#fff','#111',240,80,2);pk2.position.set(4249,150,2378);pk2.rotation.y=Math.PI/2;sc.add(pk2);bx('steel',4246,2376,6,4,0,150);
  const dk=wSign('🚲 Kopřivnice 8 km →','#fde047','#111',280,70);dk.position.set(2700,140,2552);dk.rotation.y=Math.PI;sc.add(dk);bx('steel',2698,2554,4,4,0,180);
  const dk2=wSign('🏃 Kopřivnice →','#fde047','#111',240,64);dk2.position.set(1500,140,2374);sc.add(dk2);bx('steel',1498,2372,4,4,0,180)}
@@ -2905,6 +2905,28 @@ const _zW3=zWorld;zWorld=function(sc){_zW3(sc);try{const old=ZG.golf,lbl=old&&ol
 // kola se točí při jízdě
 const _gs3=glScene;glScene=function(me,dt){const OV=_gs3(me,dt);try{const G=ZG.golf,v=Z.v.golf;if(G&&G.userData.wh&&(v.pt||v.mv)){G.userData.wh.forEach(w=>{w.rotation.x+=dt*14})}}catch(e){}return OV};
 const _avP4=avPose;avPose=function(a,P,X,Y,zj,dt,head){const r=_avP4(a,P,X,Y,zj,dt,head);try{if(window.HIDEME&&a.c&&a.c.id===myCid()&&a.root)a.root.visible=false}catch(e){}return r};
+// ================= v32 · Nugyho byt (1. patro, Kopřivnice) – Domů 🏠 / Ven 🚪 =================
+const NROOM={x:6300,y:5200,w:520,d:360},NIN={x:6560,y:5440},NEXIT={x:6380,y:5500};
+function zNugFlat(sc){const R=NROOM;const fl=new THREE.Mesh(new THREE.PlaneGeometry(R.w,R.d),new THREE.MeshLambertMaterial({map:gtex(128,128,(g,W,H)=>{g.fillStyle='#c8a27a';g.fillRect(0,0,W,H);g.strokeStyle='#a07c55';for(let i=0;i<8;i++){g.beginPath();g.moveTo(i*16,0);g.lineTo(i*16,H);g.stroke()}})}));fl.rotation.x=-Math.PI/2;fl.position.set(R.x+R.w/2,1,R.y+R.d/2);sc.add(fl);
+ zRoomWalls(R,'#dbeafe',36);
+ // okno do dvora (1. patro – vidět stromy blízko)
+ const wt=gtex(320,160,(g,W,H)=>{g.fillStyle='#93c5fd';g.fillRect(0,0,W,H);g.fillStyle='#16a34a';for(let i=0;i<5;i++){g.beginPath();g.arc(30+i*65,90,38,0,7);g.fill()}g.fillStyle='#4b5563';g.fillRect(0,128,W,32);g.fillStyle='#1f4e9a';g.fillRect(60,112,50,20)});
+ const wn=new THREE.Mesh(new THREE.PlaneGeometry(200,100),zBasic('#fff',{map:wt}));wn.position.set(R.x+300,120,R.y+1);sc.add(wn);zB('#fff',R.x+196,R.y,208,6,66,6);
+ // sedačka, stolek, TV, kuchyňka, koberec
+ zB('#475569',R.x+40,R.y+40,200,70,0,34);zB('#334155',R.x+40,R.y+20,200,22,0,72);zB('#a16207',R.x+100,R.y+150,90,50,0,26);
+ zB('#111827',R.x+R.w-20,R.y+120,10,110,50,70);zB('#6b7280',R.x+R.w-30,R.y+160,20,30,0,50);
+ zB('#e5e7eb',R.x+R.w-200,R.y+R.d-60,180,50,0,60);zB('#9ca3af',R.x+R.w-200,R.y+R.d-60,180,50,60,4);
+ const rg=new THREE.Mesh(new THREE.PlaneGeometry(220,140),zBasic('#ec4899',{transparent:true,opacity:.35}));rg.rotation.x=-Math.PI/2;rg.position.set(R.x+150,1.5,R.y+175);sc.add(rg);
+ // rohožka u dveří
+ zB('#7c2d12',NEXIT.x-40,R.y+R.d-6,80,6,0,120);
+ zSign('🏠 Nugy · 1. patro · Kopřivnice',R.x+260,R.y+4,170,0,'#1d4ed8','#fff',340)}
+const _zW4=zWorld;zWorld=function(sc){_zW4(sc);try{zNugFlat(sc)}catch(e){console.error('nugflat',e)}};
+function zNugCtx(p){const D=(a,b)=>Math.hypot(p.x-a,p.y-b);
+ if(D(NUGDOOR.x,NUGDOOR.y)<130)return{l:'Domů 🏠 (Nugy, 1. patro)',e:'🏠',f:()=>{zTp(p,NIN.x,NIN.y);chat(p.c.n,NUGK.includes(p.c.id)?'🏠 Jsem doma v 1. patře.':'🏠 Jdu na návštěvu k Nugymu (1. patro).','#38bdf8')}};
+ if(zIn(NROOM,p,8))return{l:'Ven 🚪 před panelák',e:'🚪',f:()=>zTp(p,NUGDOOR.x,NUGDOOR.y-70)};
+ return null}
+const _ctx4=ctx;ctx=function(p){let r=_ctx4(p);try{if(S&&S.d3&&p&&!p.ride&&!p.bag){const n=zNugCtx(p);if(n&&!(r&&r.prio))return n;
+  if(!r&&zIn(DROOM,p,8))return{l:'Ven 🚪 před panelák',e:'🚪',f:()=>zTp(p,DENDOOR.x,DENDOOR.y-60)}}}catch(e){}return r};
 drawMenu();
 /*SW*/if(location.protocol.startsWith('http')&&'serviceWorker'in navigator){const hadC=!!navigator.serviceWorker.controller;let rl=0;
  const doReload=()=>{if(rl)return;rl=1;location.reload()};
